@@ -112,6 +112,80 @@ try {
     assert.ok(requests.every((url) => url.startsWith(base)), "unexpected external dependency");
     await page.screenshot({ path: join(screenshots, "production-desktop.png"), fullPage: true });
   });
+  await check("complete geography survives zoom, offscreen pans and an unfinished drag", async () => {
+    const atlasPage = await context.newPage();
+    const geographyRequests = [];
+    atlasPage.on("request", (request) => {
+      if (/taiwan(?:-rivers)?\.geojson$/.test(request.url())) geographyRequests.push(request.url());
+    });
+    // Expose the instance only in the test response; production has no debug global.
+    await atlasPage.route("**/assets/map.js", async (route) => {
+      const response = await route.fetch();
+      await route.fulfill({ response, body: (await response.text()).replace(
+        "const map = L.map(element,", "const map = window.__testAtlas = L.map(element,") });
+    });
+    await atlasPage.goto(base + "/");
+    await atlasPage.waitForFunction(() => document.querySelectorAll(".geography-overlay path").length === 2);
+    await atlasPage.evaluate(() => {
+      window.__geographyPaths = [...document.querySelectorAll(".geography-overlay path")];
+      window.__geographyData = window.__geographyPaths.map((path) => path.getAttribute("d"));
+    });
+    async function intact() {
+      const result = await atlasPage.evaluate(() => {
+        const paths = [...document.querySelectorAll(".geography-overlay path")];
+        return {
+          same: paths.every((path, index) => path === window.__geographyPaths[index]
+            && path.getAttribute("d") === window.__geographyData[index]),
+          parts: paths.map((path) => (path.getAttribute("d").match(/M/g) || []).length).sort((a, b) => a - b),
+          overflow: paths.map((path) => getComputedStyle(path.ownerSVGElement).overflow),
+          strokes: paths.map((path) => path.getAttribute("vector-effect")),
+        };
+      });
+      assert.ok(result.same, "zoom/pan must retain the original complete SVG paths");
+      assert.deepEqual(result.parts, [7, 23]);
+      assert.deepEqual(result.overflow, ["visible", "visible"]);
+      assert.deepEqual(result.strokes, ["non-scaling-stroke", "non-scaling-stroke"]);
+    }
+    for (const zoom of [9, 12, 14]) {
+      await atlasPage.evaluate((zoom) => window.__testAtlas.setView([25.1, 121.5], zoom, {animate: false}), zoom);
+      await intact();
+    }
+    const alignment = await atlasPage.evaluate(async () => {
+      const map = window.__testAtlas, rect = map.getContainer().getBoundingClientRect();
+      const values = [];
+      for (const [file, selector] of [
+        ["taiwan.geojson", ".leaflet-overlay-pane .geography-overlay path"],
+        ["taiwan-rivers.geojson", ".leaflet-atlasRivers-pane .geography-overlay path"]]) {
+        const data = await (await fetch("./assets/" + file)).json();
+        let coords = data.features[0].geometry.coordinates;
+        while (Array.isArray(coords[0])) coords = coords[0];
+        const expected = map.latLngToContainerPoint([coords[1], coords[0]]);
+        const path = document.querySelector(selector);
+        const actual = path.getPointAtLength(0).matrixTransform(path.getScreenCTM());
+        values.push(Math.hypot(actual.x - rect.left - expected.x, actual.y - rect.top - expected.y));
+      }
+      return values;
+    });
+    assert.ok(alignment.every((error) => error < 1.5), "SVG and Leaflet coordinates must agree within pixel rounding");
+    // Move every geographic feature offscreen, then return without losing geometry.
+    await atlasPage.evaluate(() => window.__testAtlas.setView([23.5, 116], 10, {animate: false}));
+    await intact();
+    await atlasPage.evaluate(() => window.__testAtlas.setView([23.5, 119.3], 10, {animate: false}));
+    const box = await atlasPage.locator("#map").boundingBox();
+    await atlasPage.mouse.move(box.x + box.width - 90, box.y + box.height * 0.6);
+    await atlasPage.mouse.down();
+    await atlasPage.mouse.move(box.x + 90, box.y + box.height * 0.6, {steps: 20});
+    await intact();
+    await atlasPage.screenshot({path: join(screenshots, "geography-during-drag.png")});
+    await atlasPage.mouse.up();
+    await atlasPage.setViewportSize({width: 390, height: 844});
+    await atlasPage.evaluate(() => window.__testAtlas.setView([23.8, 121], 9, {animate: false}));
+    await intact();
+    await atlasPage.screenshot({path: join(screenshots, "geography-mobile.png"), fullPage: true});
+    // Two initial downloads plus two deliberate coordinate checks above; no pan/zoom downloads.
+    assert.equal(geographyRequests.length, 4);
+    await atlasPage.close();
+  });
   await check("Chinese / English / number search, invalid URL fallback", async () => {
     for (const query of ["眼睛", "eye", "74"]) {
       await page.locator("#concept-search").fill(query);

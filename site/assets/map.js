@@ -42,6 +42,45 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   let rivers = null;
   let riverRequest = null;
 
+  // Project fixed geography once into a shared Web Mercator SVG viewport.
+  // SVGOverlay scales/translates complete paths; panning never clips or rebuilds them.
+  function geographyOverlay(geojson, pane, style) {
+    const ns = "http://www.w3.org/2000/svg";
+    const bounds = L.latLngBounds(initialBounds);
+    const origin = map.project(bounds.getNorthWest(), 10);
+    const size = map.project(bounds.getSouthEast(), 10).subtract(origin);
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 " + size.x + " " + size.y);
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("focusable", "false");
+    function line(coordinates, closed = false) {
+      return coordinates.map(([lng, lat], index) => {
+        const point = map.project([lat, lng], 10).subtract(origin);
+        return (index ? "L" : "M") + point.x.toFixed(3) + " " + point.y.toFixed(3);
+      }).join(" ") + (closed ? "Z" : "");
+    }
+    function pathData(geometry) {
+      const coords = geometry.coordinates;
+      switch (geometry.type) {
+        case "LineString": return line(coords);
+        case "MultiLineString": return coords.map((part) => line(part)).join(" ");
+        case "Polygon": return coords.map((ring) => line(ring, true)).join(" ");
+        case "MultiPolygon": return coords.flatMap((polygon) => polygon.map((ring) => line(ring, true))).join(" ");
+        default: throw new Error("不支援的底圖幾何類型");
+      }
+    }
+    for (const feature of geojson.features) {
+      const path = document.createElementNS(ns, "path");
+      path.setAttribute("d", pathData(feature.geometry));
+      path.setAttribute("vector-effect", "non-scaling-stroke");
+      path.setAttribute("fill-rule", "evenodd");
+      for (const [name, value] of Object.entries(style)) path.setAttribute(name, value);
+      svg.append(path);
+    }
+    return L.svgOverlay(svg, bounds, { pane, interactive: false, className: "geography-overlay" });
+  }
+
   function loadRivers() {
     if (riverRequest) return riverRequest;
     onRiversError(false);
@@ -52,10 +91,9 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
       })
       .then((geojson) => {
         if (rivers) rivers.remove();
-        rivers = L.geoJSON(geojson, {
-          pane: "atlasRivers", interactive: false,
-          style: { color: "#c4bbae", weight: 1, opacity: 0.6, fill: false,
-            lineCap: "round", lineJoin: "round" },
+        rivers = geographyOverlay(geojson, "atlasRivers", {
+          stroke: "#c4bbae", "stroke-width": 1, "stroke-opacity": 0.6, fill: "none",
+          "stroke-linecap": "round", "stroke-linejoin": "round",
         }).addTo(map);
         map.attributionControl.addAttribution('<a href="https://www.hydrosheds.org/products/hydrorivers">HydroRIVERS</a>');
       })
@@ -74,9 +112,9 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
       })
       .then((geojson) => {
         if (basemap) basemap.remove();
-        basemap = L.geoJSON(geojson, {
-          interactive: false,
-          style: { color: "#c9c2b7", weight: 1.3, fillColor: "#e8e3d7", fillOpacity: 0.46 },
+        basemap = geographyOverlay(geojson, "overlayPane", {
+          stroke: "#c9c2b7", "stroke-width": 1.3, fill: "#e8e3d7", "fill-opacity": 0.46,
+          "stroke-linecap": "round", "stroke-linejoin": "round",
         }).addTo(map);
       })
       .catch(() => onBasemapError(true))

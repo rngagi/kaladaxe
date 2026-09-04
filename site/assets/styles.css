@@ -204,3 +204,6 @@ dialog p { font: 13px/2 var(--sans); color: #786a60; }
   .map-legend { gap: 8px; padding: 10px; }
   .map-legend > label + label { padding-left: 8px; }
 }
+
+/* Only the outer map panel clips complete, non-interactive geography overlays. */
+.geography-overlay { overflow: visible; pointer-events: none; }

@@ -168,7 +168,9 @@ site/   ────────────────────┘
 
 app.js 負責頁面與狀態，data.js 負責 JSON 載入與請求快取，map.js 負責 Leaflet、marker 與標籤。初次只下載 metadata、地理輪廓、水系和一個詞項；沒有全部詞彙預載或 service worker。失敗請求可重試，過期回應不更新目前畫面。
 
-Leaflet、Natural Earth 地理輪廓與HydroRIVERS 水系圖層隨網站發布；不使用外部圖磚或網路字體。字體依裝置可用的 Noto Serif TC、Songti TC、Georgia 與系統字體顯示，字形可能略有差異。
+底圖與水系在載入後一次投影成完整 SVG，以 Leaflet SVGOverlay 疊圖呈現。兩者共用 Web Mercator 座標範圍，縮放與拖曳只更新位置、尺寸，不按視野裁切或重建路徑；外層地圖容器統一遮罩，線寬保持固定。即使整個台灣暫時離開視野，完整圖形仍保留，也不會重新下載資料。詞彙標籤仍在縮放結束後重新避讓。
+
+Leaflet、Natural Earth 地理輪廓與 HydroRIVERS 水系圖層隨網站發布；不使用外部圖磚或網路字體。字體依裝置可用的 Noto Serif TC、Songti TC、Georgia 與系統字體顯示，字形可能略有差異。
 
 ## GitHub Pages
 
