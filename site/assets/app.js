@@ -3,7 +3,7 @@ import { createAtlas } from "./map.js";
 
 const $ = (id) => document.getElementById(id);
 const store = createDataStore();
-const typeNames = { language: "語言", dialect: "方言", proto: "重建語 · 展示位置" };
+const typeNames = { language: "語言", dialect: "方言", proto: "原始語言" };
 let atlas;
 let concepts = [];
 let varieties = [];
@@ -19,6 +19,14 @@ let requestVersion = 0;
 let initialized = false;
 let booting = false;
 let loadState = "loading";
+let showLanguages = true;
+let showProto = false;
+let editorialData = null;
+let demoData = null;
+let demoActive = false;
+let retryDemo = false;
+let debugClicks = 0;
+let lastDebugClick = 0;
 
 function node(tag, className, text) {
   const result = document.createElement(tag);
@@ -41,8 +49,12 @@ function isInGroup(variety, target = filterId) {
   return false;
 }
 
+function typeIsVisible(variety) {
+  return variety.type === "proto" ? showProto : showLanguages;
+}
+
 function visibleVarieties() {
-  return varieties.filter((variety) => isInGroup(variety));
+  return varieties.filter((variety) => isInGroup(variety) && typeIsVisible(variety));
 }
 
 function pathOf(variety) {
@@ -73,7 +85,7 @@ function syncSelection() {
 
 function showDetail(id, reveal = false) {
   const variety = varietyIndex.get(id);
-  if (!variety || !hasForm(id) || !isInGroup(variety)) return;
+  if (!variety || !hasForm(id) || !isInGroup(variety) || !typeIsVisible(variety)) return;
   selectedId = id;
   const form = word.forms[id];
   $("detail-type").textContent = typeNames[variety.type];
@@ -120,7 +132,7 @@ function makeVarietyButton(variety, proto = false) {
   button.type = "button";
   button.dataset.selectVariety = variety.id;
   button.setAttribute("aria-pressed", "false");
-  if (proto) button.append(node("span", "proto-tag", "重建"));
+  if (proto) button.append(node("span", "proto-tag", "原始語言"));
   button.append(node("span", "", variety.name));
   button.addEventListener("click", () => {
     if (!isInGroup(variety)) applyFilter(variety.subgroup_id);
@@ -192,6 +204,7 @@ function renderConcepts() {
 
 function syncConcept() {
   const concept = conceptIndex.get(currentId);
+  $("current-series").textContent = demoActive ? "DEMO" : "SWADESH";
   $("current-number").textContent = concept?.swadesh_number || "—";
   $("current-zh").textContent = concept?.gloss_zh || "探索詞彙";
   $("current-en").textContent = concept?.gloss_en || "";
@@ -221,7 +234,7 @@ function renderWord() {
     button.dataset.selectVariety = variety.id;
     button.setAttribute("aria-pressed", String(variety.id === selectedId));
     const name = node("span", "result-name", variety.name);
-    if (variety.type === "proto") name.append(node("span", "proto-tag", "重建"));
+    if (variety.type === "proto") name.append(node("span", "proto-tag", "原始語言"));
     const orth = node("span", "result-orth", form.orth);
     orth.dir = "auto";
     const ipa = node("span", "result-ipa", form.ipa);
@@ -232,18 +245,26 @@ function renderWord() {
     $("results").append(item);
   }
   $("group-tree").querySelectorAll("[data-select-variety]").forEach((button) => {
+    button.hidden = !typeIsVisible(varietyIndex.get(button.dataset.selectVariety));
     button.disabled = !hasForm(button.dataset.selectVariety);
     button.title = button.disabled ? "此詞項尚未收錄" : "查看詞彙詳情";
   });
+  $("variety-count").textContent = varieties.filter(typeIsVisible).length;
   if (loadState === "loading") {
     $("results-message").textContent = "正在讀取這個詞項…";
     notice("正在讀取詞彙", "稍候片刻，也可以繼續選擇其他詞項。");
   } else if (loadState === "error") {
     $("results-message").textContent = "詞彙下載失敗，請重試。";
     notice("暫時無法讀取詞彙", "請檢查連線並重新載入。", true);
+  } else if (!showLanguages && !showProto) {
+    $("results-message").textContent = "請開啟至少一種顯示類別。";
+    notice("尚未開啟語言圖層", "勾選「語言別」或「原始語言」以查看詞彙。");
   } else if (!varieties.length) {
     $("results-message").textContent = "詞彙會隨資料整理逐步加入。";
     notice("詞彙，正待收錄", "先從左側選擇一個詞。語言與詞彙資料加入後，將在這片地圖上相遇。");
+  } else if (!visible.length && varieties.some((variety) => isInGroup(variety))) {
+    $("results-message").textContent = "目前顯示類別沒有資料。";
+    notice("此類別沒有可顯示的資料", "試試開啟另一種顯示類別，或選擇其他語群。");
   } else if (!visible.length) {
     $("results-message").textContent = "這個語群尚無語言資料。";
     notice("此語群尚無資料", "選擇其他語群，或回到全部語群。");
@@ -256,11 +277,12 @@ function renderWord() {
   }
   $("results-message").hidden = !($("results-message").textContent);
   atlas.setData(available.map((variety) => ({ variety, form: word.forms[variety.id] })), selectedId);
-  if (selectedId && hasForm(selectedId) && isInGroup(varietyIndex.get(selectedId))) showDetail(selectedId);
+  if (selectedId && hasForm(selectedId) && isInGroup(varietyIndex.get(selectedId)) && typeIsVisible(varietyIndex.get(selectedId))) showDetail(selectedId);
   syncSelection();
 }
 
 function updateURL(mode) {
+  if (demoActive) return; // Debug is session-only and never becomes a shareable concept URL.
   const url = new URL(location.href);
   if (currentId) url.searchParams.set("concept", currentId);
   else url.searchParams.delete("concept");
@@ -270,6 +292,23 @@ function updateURL(mode) {
 
 async function selectConcept(id, mode = "none") {
   const next = conceptIndex.has(id) ? id : conceptIndex.has("water") ? "water" : concepts[0]?.id;
+  const useDemo = Boolean(demoData && next === demoData.concept.id);
+  if (useDemo !== demoActive) {
+    demoActive = useDemo;
+    const dataset = useDemo ? demoData : editorialData;
+    varieties = dataset.varieties;
+    groups = dataset.subgroups;
+    varietyIndex = new Map(varieties.map((item) => [item.id, item]));
+    groupIndex = new Map(groups.map((item) => [item.id, item]));
+    filterId = null;
+    selectedId = null;
+    $("filter-label").textContent = "全部語群";
+    $("all-groups").classList.add("active");
+    $("all-groups").setAttribute("aria-pressed", "true");
+    renderTree();
+  }
+  $("demo-notice").hidden = !demoActive;
+  retryDemo = false;
   currentId = next || null;
   syncConcept();
   updateURL(next !== id ? "replace" : mode);
@@ -287,12 +326,12 @@ async function selectConcept(id, mode = "none") {
     return;
   }
   try {
-    const data = await store.loadWord(next);
+    const data = useDemo ? { concept_id: next, forms: demoData.forms } : await store.loadWord(next);
     if (version !== requestVersion) return;
     word = data;
     loadState = "ready";
     // A new selection is possible only after this request has completed.
-    selectedId = previousSelection && hasForm(previousSelection) && isInGroup(varietyIndex.get(previousSelection))
+    selectedId = previousSelection && hasForm(previousSelection) && isInGroup(varietyIndex.get(previousSelection)) && typeIsVisible(varietyIndex.get(previousSelection))
       ? previousSelection : null;
   } catch {
     if (version !== requestVersion) return;
@@ -308,8 +347,9 @@ async function boot() {
   $("retry").disabled = true;
   notice("正在準備地圖", "讀取詞項與語言分類。");
   try {
-    if (!atlas) atlas = createAtlas($("map"), (id) => showDetail(id), (failed) => { $("basemap-error").hidden = !failed; });
+    if (!atlas) atlas = createAtlas($("map"), (id) => showDetail(id), (failed) => { $("basemap-error").hidden = !failed; }, (failed) => { $("rivers-error").hidden = !failed; });
     const index = await store.loadIndex();
+    editorialData = { varieties: index.varieties, subgroups: index.subgroups };
     concepts = index.concepts.items;
     varieties = index.varieties;
     groups = index.subgroups;
@@ -338,10 +378,46 @@ async function boot() {
   }
 }
 
+async function enterDemo() {
+  if (!initialized) return;
+  const version = ++requestVersion;
+  try {
+    const data = await store.loadDemo();
+    if (version !== requestVersion) return;
+    demoData = data;
+    conceptIndex.set(data.concept.id, data.concept);
+    await selectConcept(data.concept.id);
+  } catch {
+    if (version !== requestVersion) return;
+    retryDemo = true;
+    notice("示範語料載入失敗", "請檢查連線並重新載入。", true);
+  }
+}
+
+$("debug-trigger").addEventListener("click", () => {
+  const now = performance.now();
+  debugClicks = now - lastDebugClick > 3000 ? 1 : debugClicks + 1;
+  lastDebugClick = now;
+  if (debugClicks === 5) {
+    debugClicks = 0;
+    enterDemo();
+  }
+});
+
+function updateVisibility() {
+  showLanguages = $("show-languages").checked;
+  showProto = $("show-proto").checked;
+  if (selectedId && !typeIsVisible(varietyIndex.get(selectedId))) closeDetail();
+  if (initialized) renderWord();
+}
+
+$("show-languages").addEventListener("change", updateVisibility);
+$("show-proto").addEventListener("change", updateVisibility);
+$("rivers-retry").addEventListener("click", () => atlas?.loadRivers());
 $("concept-search").addEventListener("input", renderConcepts);
 $("all-groups").addEventListener("click", () => { if (initialized) applyFilter(null); });
 $("detail-close").addEventListener("click", () => closeDetail(true));
-$("retry").addEventListener("click", () => initialized ? selectConcept(currentId) : boot());
+$("retry").addEventListener("click", () => retryDemo ? enterDemo() : initialized ? selectConcept(currentId) : boot());
 $("basemap-retry").addEventListener("click", () => atlas?.loadBasemap());
 $("about-open").addEventListener("click", () => $("about-dialog").showModal());
 $("about-close").addEventListener("click", () => $("about-dialog").close());

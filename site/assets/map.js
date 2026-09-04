@@ -1,5 +1,5 @@
 // Keep geographic pins fixed. Labels use measured, bounded screen-space offsets.
-export function createAtlas(element, onSelect, onBasemapError) {
+export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   const L = window.L;
   if (!L) throw new Error("Leaflet 載入失敗");
   const map = L.map(element, { zoomControl: false, zoomSnap: 0.25, zoomDelta: 0.5, minZoom: 5, maxZoom: 14, attributionControl: true });
@@ -23,6 +23,9 @@ export function createAtlas(element, onSelect, onBasemapError) {
   };
   home.addTo(map);
   reset();
+  const riversPane = map.createPane("atlasRivers");
+  riversPane.style.zIndex = "410";
+  riversPane.style.pointerEvents = "none";
   const linesPane = map.createPane("atlasLines");
   linesPane.style.zIndex = "580";
   linesPane.style.pointerEvents = "none";
@@ -36,6 +39,30 @@ export function createAtlas(element, onSelect, onBasemapError) {
   let frame = 0;
   let basemap = null;
   let baseRequest = null;
+  let rivers = null;
+  let riverRequest = null;
+
+  function loadRivers() {
+    if (riverRequest) return riverRequest;
+    onRiversError(false);
+    riverRequest = fetch(new URL("./taiwan-rivers.geojson", import.meta.url))
+      .then((response) => {
+        if (!response.ok) throw new Error("水系圖層下載失敗");
+        return response.json();
+      })
+      .then((geojson) => {
+        if (rivers) rivers.remove();
+        rivers = L.geoJSON(geojson, {
+          pane: "atlasRivers", interactive: false,
+          style: { color: "#c4bbae", weight: 1, opacity: 0.6, fill: false,
+            lineCap: "round", lineJoin: "round" },
+        }).addTo(map);
+        map.attributionControl.addAttribution('<a href="https://www.hydrosheds.org/products/hydrorivers">HydroRIVERS</a>');
+      })
+      .catch(() => onRiversError(true))
+      .finally(() => { riverRequest = null; });
+    return riverRequest;
+  }
 
   function loadBasemap() {
     if (baseRequest) return baseRequest;
@@ -77,7 +104,7 @@ export function createAtlas(element, onSelect, onBasemapError) {
     const boxes = [];
     // Chrome is a layout obstacle too, especially the selected detail card.
     const origin = element.getBoundingClientRect();
-    for (const node of element.parentElement.querySelectorAll(".map-legend, .detail-card:not([hidden]), .map-notice:not([hidden]), .leaflet-control-zoom, .home-control")) {
+    for (const node of element.parentElement.querySelectorAll(".map-legend, .demo-notice:not([hidden]), .detail-card:not([hidden]), .map-notice:not([hidden]), .leaflet-control-zoom, .home-control")) {
       const rect = node.getBoundingClientRect();
       if (rect.bottom > origin.top && rect.top < origin.bottom) {
         boxes.push({ x: rect.left - origin.left, y: rect.top - origin.top, width: rect.width, height: rect.height });
@@ -184,5 +211,6 @@ export function createAtlas(element, onSelect, onBasemapError) {
   if (detail) observer.observe(detail);
   if (document.fonts) document.fonts.ready.then(schedule);
   loadBasemap();
-  return { setData, select, schedule, loadBasemap, reset };
+  loadRivers();
+  return { setData, select, schedule, loadBasemap, loadRivers, reset };
 }

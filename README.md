@@ -114,6 +114,12 @@ python3 scripts/build.py --check
 
 建置器先完成驗證並準備暫存產物，再替換輸出。驗證失敗不更動上一次產物；成功建置會移除舊產物。輸出必須是新目錄，或包含 .kaladaxe-build 標記的既有建置目錄，不可與 source/、site/ 等來源重疊。
 
+## 隱藏示範語料
+
+左下角 k 在每次間隔不超過三秒的情況下連按五次，按需載入獨立的 site/assets/debug/999.json。入口維持一般游標。示範編號為 999，包含 12 筆虛構 variety 與 orth／IPA，畫面明示為合成語料；不會加入 207 詞選單、搜尋結果、正式 source/ 或分享網址。
+
+切回任何一般詞項即恢復正式資料。重新整理也會離開示範。此靜態檔案隨網站發布，隱藏入口僅為除錯操作，並非存取控制。需要修改示範時直接編輯該 JSON；tests/fixtures 則持續只用於獨立測試。
+
 ## 合成資料預覽與測試
 
 ~~~sh
@@ -136,6 +142,8 @@ node tests/browser_smoke.mjs
 ## 網站操作
 
 - 搜尋詞項編號、中英文 gloss，預設開啟 water（第 150 詞）。
+- 地圖開關可分別顯示「語言別」與「原始語言」，同步篩選清單及詳情。預設只顯示語言別；示範模式沿用目前設定，重新整理後恢復預設。
+- 底圖以 HydroRIVERS 全長至少 40 公里的主流呈現簡易水系輪廓，保留澎湖、綠島與蘭嶼，不顯示金門及海域名稱。
 - 語群分類樹可展開；「查看此語群」包含所有子群及其重建語。
 - 清單與地圖共用選取狀態；詳情提供 orth、IPA、分類路徑與位置說明。
 - 文字與 variety 名稱小幅避讓（相對預設位置最多 48 CSS px），移位時以細線連回原座標；排不下只隱藏文字，marker 保留。
@@ -158,9 +166,9 @@ site/   ────────────────────┘
                                  └── words/<concept_id>.json
 ~~~
 
-app.js 負責頁面與狀態，data.js 負責 JSON 載入與請求快取，map.js 負責 Leaflet、marker 與標籤。初次只下載 metadata、地理輪廓和一個詞項；沒有全部詞彙預載或 service worker。失敗請求可重試，過期回應不更新目前畫面。
+app.js 負責頁面與狀態，data.js 負責 JSON 載入與請求快取，map.js 負責 Leaflet、marker 與標籤。初次只下載 metadata、地理輪廓、水系和一個詞項；沒有全部詞彙預載或 service worker。失敗請求可重試，過期回應不更新目前畫面。
 
-Leaflet 與地理輪廓隨網站發布；不使用外部圖磚或網路字體。字體依裝置可用的 Noto Serif TC、Songti TC、Georgia 與系統字體顯示，字形可能略有差異。
+Leaflet、Natural Earth 地理輪廓與HydroRIVERS 水系圖層隨網站發布；不使用外部圖磚或網路字體。字體依裝置可用的 Noto Serif TC、Songti TC、Georgia 與系統字體顯示，字形可能略有差異。
 
 ## GitHub Pages
 
@@ -172,5 +180,11 @@ Leaflet 與地理輪廓隨網站發布；不使用外部圖磚或網路字體。
 workflow 的 PR 事件只測試與建置，不部署。部署使用 github-pages environment，權限僅為 contents: read、pages: write、id-token: write。若變更預設分支名稱，同步更新 workflow 的 push.branches。
 
 所有本地資源使用相對路徑，JSON 以模組位置為基準，不依賴 repository 名稱。部署失敗不替換既有 Pages 站點。
+
+水系使用 HydroRIVERS v1.0 的 ORD_CLAS 1，只保留各流域全長至少 40 公里的主流，無河名或河床面積。長度使用該主流全部河段的 LENGTH_KM 加總，整條保留或移除，不依單段長度截斷。線網解析度約 500 公尺，適合台灣概覽；小溪與離島水系可能未收錄，放大後也不增加精度。
+
+更換水系來源時才需執行 scripts/prepare_rivers.py，該一次性工具需要 pyshp 與 Shapely；例：python3 scripts/prepare_rivers.py /path/to/HydroRIVERS_v10_as.shp。例行建置仍只需 Python 標準函式庫，使用已整理的本地 GeoJSON。工具依島嶼輪廓選擇流域、保留全長至少 40 公里的主流、合併相接河段並取小數五位，不做額外折線簡化或裁斷河口。
+
+底圖與水系均為 WGS84 經緯度，由同一 Leaflet 地圖以 EPSG:3857 投影顯示。Natural Earth 的概化海岸與 HydroRIVERS 河口存在局部位置差異；沒有額外平移或以海岸裁切河流來強迫對齊。
 
 來源、授權與地理資料處理方式見 THIRD_PARTY_NOTICES.md。

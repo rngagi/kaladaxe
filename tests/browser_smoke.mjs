@@ -129,6 +129,11 @@ try {
     await page.goto(base + "/repo/?concept=water");
     await settled(page);
     assert.ok(await page.locator(".test-banner").isVisible());
+    assert.ok(await page.locator("#show-languages").isChecked());
+    assert.equal(await page.locator("#show-proto").isChecked(), false);
+    assert.equal(await page.locator(".map-pin").count(), 4);
+    assert.equal(await page.locator(".map-pin.proto").count(), 0);
+    await page.locator("#show-proto").check();
     assert.equal(await page.locator(".map-pin").count(), 6);
     assert.equal(await page.locator("#missing-count").textContent(), "1");
     assert.equal(await page.locator('#group-tree [data-select-variety="test_proto_branch"]').count(), 1);
@@ -151,7 +156,7 @@ try {
       assert.equal(await page.locator(".map-pin").count(), 6);
     }
     await page.locator('#results [data-select-variety="test_proto_branch"]').click();
-    assert.match(await page.locator("#detail-type").textContent(), /展示位置/);
+    assert.match(await page.locator("#detail-type").textContent(), /原始語言/);
     assert.match(await page.locator("#detail-metadata").textContent(), /非祖居地推定/);
     await page.locator("#detail-close").click();
     await layoutCheck(page);
@@ -180,7 +185,7 @@ try {
     assert.equal(await page.locator(".map-pin").count(), 1);
     await pick(page, "eye");
     assert.equal(await page.locator(".map-pin").count(), 0);
-    assert.equal(await page.locator("#missing-count").textContent(), "7");
+    assert.equal(await page.locator("#missing-count").textContent(), "5");
   });
   await check("in-flight request deduplication", async () => {
     const before = requests.filter((url) => url === base + "/repo/data/words/eye.json").length;
@@ -211,7 +216,7 @@ try {
     await response;
     await sleep(100);
     assert.equal(await race.locator("#current-en").textContent(), "water");
-    assert.equal(await race.locator(".map-pin").count(), 6);
+    assert.equal(await race.locator(".map-pin").count(), 4);
     await race.close();
   });
   await check("word download failure retries without poisoning cache", async () => {
@@ -224,25 +229,113 @@ try {
     await retry.locator("#retry").click();
     await settled(retry);
     assert.equal(count, 2);
-    assert.equal(await retry.locator(".map-pin").count(), 6);
+    assert.equal(await retry.locator(".map-pin").count(), 4);
     await retry.close();
   });
   await check("metadata and basemap failures have independent retries", async () => {
     const retry = await context.newPage();
-    let metadata = 0, baseCount = 0;
+    let metadata = 0, baseCount = 0, riverCount = 0;
     await retry.route("**/data/concepts.json", (route) => ++metadata === 1
       ? route.fulfill({ status: 503, body: "failure" }) : route.continue());
     await retry.route("**/assets/taiwan.geojson", (route) => ++baseCount === 1
+      ? route.fulfill({ status: 503, body: "failure" }) : route.continue());
+    await retry.route("**/assets/taiwan-rivers.geojson", (route) => ++riverCount === 1
       ? route.fulfill({ status: 503, body: "failure" }) : route.continue());
     await retry.goto(base + "/repo/");
     await retry.locator("#retry").waitFor({ state: "visible" });
     await retry.locator("#retry").click();
     await settled(retry);
+    await retry.locator("#rivers-error").waitFor({ state: "visible" });
+    await retry.locator("#rivers-retry").click();
+    await retry.locator(".leaflet-atlasRivers-pane path").first().waitFor({ state: "attached" });
+    assert.equal(riverCount, 2);
     assert.ok(await retry.locator("#basemap-error").isVisible());
     await Promise.all([retry.waitForResponse((res) => res.url().endsWith("taiwan.geojson")), retry.locator("#basemap-retry").click()]);
     await retry.locator("#basemap-error").waitFor({ state: "hidden" });
     assert.equal(metadata, 2);
     await retry.close();
+  });
+  await check("major rivers, hidden demo 999, category toggles and production restoration", async () => {
+    await page.goto(base + "/?concept=debug_999");
+    await settled(page);
+    assert.equal(new URL(page.url()).searchParams.get("concept"), "water");
+    assert.ok(!requests.some((url) => url.endsWith("/debug/999.json")));
+    await page.locator(".leaflet-atlasRivers-pane path").first().waitFor({ state: "attached" });
+    assert.equal(await page.locator(".leaflet-atlasRivers-pane path").count(), 1);
+    assert.deepEqual(await page.locator(".leaflet-atlasRivers-pane path").evaluateAll(
+      (paths) => paths.map((path) => path.getAttribute("fill"))), ["none"]);
+    assert.equal(await page.locator(".ocean-label").count(), 0);
+    const trigger = page.locator("#debug-trigger");
+    assert.equal(await trigger.evaluate((el) => getComputedStyle(el).cursor), "default");
+    for (let i = 0; i < 4; i++) await trigger.click();
+    assert.equal(await page.locator("#current-number").textContent(), "150");
+    assert.ok(!requests.some((url) => url.endsWith("/debug/999.json")));
+    await trigger.click();
+    await page.waitForFunction(() => document.getElementById("current-number").textContent === "999");
+    assert.equal(await page.locator(".map-pin").count(), 9);
+    assert.equal(await page.locator(".map-pin.proto").count(), 0);
+    assert.ok(await page.locator("#demo-notice").isVisible());
+    assert.equal(await page.locator(".concept-button").count(), 207);
+    await page.locator("#concept-search").fill("999");
+    assert.equal(await page.locator(".concept-button").count(), 0);
+    await page.locator("#concept-search").fill("");
+    await page.locator('#results [data-select-variety="demo_north"]').click();
+    assert.ok((await page.locator("#detail-orth").textContent()).length);
+    assert.ok((await page.locator("#detail-ipa").textContent()).length);
+    await layoutCheck(page);
+    await page.locator("#detail-close").click();
+    await page.screenshot({ path: join(screenshots, "demo-desktop.png"), fullPage: true });
+    await page.locator("#show-proto").check();
+    assert.equal(await page.locator(".map-pin").count(), 12);
+    await page.locator("#show-languages").uncheck();
+    assert.equal(await page.locator(".map-pin").count(), 3);
+    await page.locator('#results [data-select-variety="demo_proto"]').click();
+    assert.equal(await page.locator("#detail-type").textContent(), "原始語言");
+    await page.locator("#show-proto").uncheck();
+    assert.ok(await page.locator("#detail").isHidden());
+    assert.equal(await page.locator(".map-pin").count(), 0);
+    await page.locator("#show-languages").check();
+    assert.equal(await page.locator(".map-pin").count(), 9);
+    await pick(page, "water");
+    assert.ok(await page.locator("#demo-notice").isHidden());
+    assert.equal(await page.locator(".map-pin").count(), 0);
+    assert.equal(await page.locator("#variety-count").textContent(), "0");
+    for (let i = 0; i < 5; i++) await trigger.click();
+    await page.waitForFunction(() => document.getElementById("current-number").textContent === "999");
+    assert.equal(requests.filter((url) => url.endsWith("/debug/999.json")).length, 1);
+    await page.reload();
+    await settled(page);
+    assert.equal(await page.locator("#current-number").textContent(), "150");
+    assert.equal(await page.locator("#show-proto").isChecked(), false);
+  });
+  await check("demo download failure retries and stale activation is discarded", async () => {
+    const retry = await context.newPage();
+    let attempts = 0;
+    await retry.route("**/debug/999.json", (route) => ++attempts === 1
+      ? route.fulfill({ status: 503, body: "failure" }) : route.continue());
+    await retry.goto(base + "/");
+    await settled(retry);
+    for (let i = 0; i < 5; i++) await retry.locator("#debug-trigger").click();
+    await retry.locator("#retry").waitFor({ state: "visible" });
+    await retry.locator("#retry").click();
+    await retry.waitForFunction(() => document.getElementById("current-number").textContent === "999");
+    assert.equal(attempts, 2);
+    await retry.close();
+    const race = await context.newPage();
+    let release;
+    const gate = new Promise((done) => { release = done; });
+    await race.route("**/debug/999.json", async (route) => { await gate; await route.continue(); });
+    await race.goto(base + "/");
+    await settled(race);
+    for (let i = 0; i < 5; i++) await race.locator("#debug-trigger").click();
+    await pick(race, "eye");
+    const response = race.waitForResponse((res) => res.url().endsWith("/debug/999.json"));
+    release();
+    await response;
+    await sleep(100);
+    assert.equal(await race.locator("#current-en").textContent(), "eye");
+    assert.ok(await race.locator("#demo-notice").isHidden());
+    await race.close();
   });
   await check("fully empty templates remain browseable", async () => {
     await page.goto(base + "/blank/");
@@ -275,6 +368,14 @@ try {
     await page.goto(base + "/");
     await settled(page);
     await page.screenshot({ path: join(screenshots, "production-mobile.png"), fullPage: true });
+    for (let i = 0; i < 5; i++) await page.locator("#debug-trigger").click();
+    await page.waitForFunction(() => document.getElementById("current-number").textContent === "999");
+    assert.equal(await page.locator(".map-pin").count(), 9);
+    await page.locator("#show-proto").check();
+    assert.equal(await page.locator(".map-pin").count(), 12);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+    await layoutCheck(page);
+    await page.screenshot({ path: join(screenshots, "demo-mobile.png"), fullPage: true });
   });
   assert.deepEqual(errors, [], "unexpected browser errors");
   assert.deepEqual(badResponses, [], "unexpected missing assets");

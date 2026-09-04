@@ -1,6 +1,7 @@
 import copy
 import csv
 import json
+import math
 import shutil
 import tempfile
 import unittest
@@ -177,6 +178,65 @@ class BuildTests(unittest.TestCase):
         for target in (self.source, self.source / "nested", ROOT, ROOT / "site"):
             with self.assertRaises(DataError):
                 build(self.source, target)
+
+    def test_debug_corpus_is_valid_and_separate_from_swadesh(self):
+        demo = json.loads((ROOT / "site/assets/debug/999.json").read_text())
+        self.assertEqual(demo["concept"]["swadesh_number"], 999)
+        write_json(self.source / "concepts.json", {"source": {}, "items": [demo["concept"]]})
+        write_json(self.source / "varieties.json", demo["varieties"])
+        write_json(self.source / "subgroups.json", demo["subgroups"])
+        self.set_rows([["concept_id", "variety_id", "orth", "ipa", "note"]] + [
+            [demo["concept"]["id"], vid, form["orth"], form["ipa"], form["note"]]
+            for vid, form in demo["forms"].items()
+        ])
+        _, varieties, _, words = validate(self.source)
+        self.assertEqual(set(words[demo["concept"]["id"]]["forms"]), {v["id"] for v in varieties})
+        self.assertTrue(any(v["type"] == "proto" for v in varieties))
+        production = json.loads((ROOT / "source/concepts.json").read_text())
+        self.assertNotIn(demo["concept"]["id"], {c["id"] for c in production["items"]})
+
+    def test_geography_excludes_kinmen_and_has_major_rivers(self):
+        land = json.loads((ROOT / "site/assets/taiwan.geojson").read_text())
+        for polygon in land["features"][0]["geometry"]["coordinates"]:
+            self.assertFalse(any(118 <= lng <= 118.6 and 24.2 <= lat <= 24.7 for lng, lat in polygon[0]))
+        rivers = json.loads((ROOT / "site/assets/taiwan-rivers.geojson").read_text())
+        self.assertEqual({f["properties"]["order"] for f in rivers["features"]}, {1})
+        self.assertLess((ROOT / "site/assets/taiwan-rivers.geojson").stat().st_size, 350_000)
+        def positions(coords):
+            if isinstance(coords[0], (int, float)):
+                yield coords
+            else:
+                for part in coords:
+                    yield from positions(part)
+        points = []
+        for feature in rivers["features"]:
+            self.assertIn(feature["geometry"]["type"], ("LineString", "MultiLineString"))
+            for lng, lat in positions(feature["geometry"]["coordinates"]):
+                self.assertTrue(119 < lng < 123 and 21 < lat < 26)
+                points.append((lng, lat))
+        # Spatial coverage across northern, western, southern and eastern Taiwan.
+        # Check river corridors rather than names: HydroRIVERS does not supply names.
+        for west, south, east, north in [
+                (121.4, 24.9, 121.6, 25.2), (120.5, 23.7, 120.9, 23.9),
+                (120.4, 22.6, 120.7, 23), (121.2, 23.3, 121.5, 23.6),
+                (121.5, 24.5, 121.85, 24.8), (121, 22.7, 121.25, 23)]:
+            self.assertTrue(any(west <= lng <= east and south <= lat <= north for lng, lat in points))
+        self.assertLess(len(points), 20_000)
+
+    def test_river_main_stems_have_no_short_fragments(self):
+        rivers = json.loads((ROOT / "site/assets/taiwan-rivers.geojson").read_text())
+        def km(a, b):
+            lng1, lat1, lng2, lat2 = map(math.radians, (*a, *b))
+            hav = math.sin((lat2 - lat1) / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin((lng2 - lng1) / 2) ** 2
+            return 12742 * math.asin(min(1, math.sqrt(hav)))
+        for feature in rivers["features"]:
+            lines = feature["geometry"]["coordinates"]
+            if feature["geometry"]["type"] == "LineString":
+                lines = [lines]
+            for line in lines:
+                length = sum(km(a, b) for a, b in zip(line, line[1:]))
+                # Independent geometric check with small rounding/geodesic tolerance.
+                self.assertGreaterEqual(length, 39.8)
 
     def test_geography_contains_main_island_penghu_green_and_orchid(self):
         data = json.loads((ROOT / "site/assets/taiwan.geojson").read_text())

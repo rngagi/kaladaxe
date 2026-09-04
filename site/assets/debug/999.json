@@ -1,0 +1,217 @@
+{
+  "concept": {
+    "id": "debug_999",
+    "swadesh_number": 999,
+    "gloss_en": "demo",
+    "gloss_zh": "示範語料"
+  },
+  "subgroups": [
+    {
+      "id": "demo_family",
+      "name": "示範語系",
+      "parent_id": null,
+      "proto_variety_id": "demo_proto"
+    },
+    {
+      "id": "demo_north_group",
+      "name": "示範北部語群",
+      "parent_id": "demo_family",
+      "proto_variety_id": "demo_proto_north"
+    },
+    {
+      "id": "demo_south_group",
+      "name": "示範南部語群",
+      "parent_id": "demo_family",
+      "proto_variety_id": "demo_proto_south"
+    },
+    {
+      "id": "demo_east_group",
+      "name": "示範東部語群",
+      "parent_id": "demo_family"
+    }
+  ],
+  "varieties": [
+    {
+      "id": "demo_north",
+      "name": "示範北部語",
+      "native_name": null,
+      "type": "language",
+      "subgroup_id": "demo_north_group",
+      "latitude": 25.05,
+      "longitude": 121.5,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    },
+    {
+      "id": "demo_north_a",
+      "name": "示範山地方言甲",
+      "native_name": null,
+      "type": "dialect",
+      "subgroup_id": "demo_north_group",
+      "latitude": 24.5,
+      "longitude": 121.1,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    },
+    {
+      "id": "demo_north_b",
+      "name": "示範山地方言乙",
+      "native_name": null,
+      "type": "dialect",
+      "subgroup_id": "demo_north_group",
+      "latitude": 24.45,
+      "longitude": 121.15,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    },
+    {
+      "id": "demo_west",
+      "name": "示範西部語",
+      "native_name": null,
+      "type": "language",
+      "subgroup_id": "demo_south_group",
+      "latitude": 23.8,
+      "longitude": 120.7,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    },
+    {
+      "id": "demo_south",
+      "name": "示範南部語",
+      "native_name": null,
+      "type": "language",
+      "subgroup_id": "demo_south_group",
+      "latitude": 22.65,
+      "longitude": 120.65,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    },
+    {
+      "id": "demo_south_a",
+      "name": "示範南部方言",
+      "native_name": null,
+      "type": "dialect",
+      "subgroup_id": "demo_south_group",
+      "latitude": 22.0,
+      "longitude": 120.8,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    },
+    {
+      "id": "demo_east",
+      "name": "示範東部語",
+      "native_name": null,
+      "type": "language",
+      "subgroup_id": "demo_east_group",
+      "latitude": 23.8,
+      "longitude": 121.5,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    },
+    {
+      "id": "demo_east_a",
+      "name": "示範東部方言",
+      "native_name": null,
+      "type": "dialect",
+      "subgroup_id": "demo_east_group",
+      "latitude": 23.15,
+      "longitude": 121.3,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    },
+    {
+      "id": "demo_island",
+      "name": "示範離島語",
+      "native_name": null,
+      "type": "language",
+      "subgroup_id": "demo_east_group",
+      "latitude": 22.05,
+      "longitude": 121.55,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    },
+    {
+      "id": "demo_proto",
+      "name": "示範原始語甲",
+      "native_name": null,
+      "type": "proto",
+      "subgroup_id": "demo_family",
+      "latitude": 24.8,
+      "longitude": 120.3,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    },
+    {
+      "id": "demo_proto_north",
+      "name": "示範原始語乙",
+      "native_name": null,
+      "type": "proto",
+      "subgroup_id": "demo_north_group",
+      "latitude": 24.1,
+      "longitude": 120.2,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    },
+    {
+      "id": "demo_proto_south",
+      "name": "示範原始語丙",
+      "native_name": null,
+      "type": "proto",
+      "subgroup_id": "demo_south_group",
+      "latitude": 22.9,
+      "longitude": 120.0,
+      "location_note": "虛構示範位置；不代表真實語言分布。"
+    }
+  ],
+  "forms": {
+    "demo_north": {
+      "orth": "luma",
+      "ipa": "[ˈlu.ma]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    },
+    "demo_north_a": {
+      "orth": "rumax",
+      "ipa": "[ruˈmaχ]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    },
+    "demo_north_b": {
+      "orth": "ruma",
+      "ipa": "[ˈɾu.ma]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    },
+    "demo_west": {
+      "orth": "dalu",
+      "ipa": "[ˈda.lu]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    },
+    "demo_south": {
+      "orth": "tsalu",
+      "ipa": "[ˈt͡sa.lu]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    },
+    "demo_south_a": {
+      "orth": "saru",
+      "ipa": "[ˈsa.ɾu]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    },
+    "demo_east": {
+      "orth": "salu",
+      "ipa": "[ˈsa.lu]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    },
+    "demo_east_a": {
+      "orth": "halu",
+      "ipa": "[ˈha.lu]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    },
+    "demo_island": {
+      "orth": "alu",
+      "ipa": "[ˈʔa.lu]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    },
+    "demo_proto": {
+      "orth": "*luma",
+      "ipa": "*[ˈlu.ma]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    },
+    "demo_proto_north": {
+      "orth": "*ruma",
+      "ipa": "*[ˈru.ma]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    },
+    "demo_proto_south": {
+      "orth": "*dalu",
+      "ipa": "*[ˈda.lu]",
+      "note": "編號 999 的虛構示範形式，僅用於檢查地圖、顯示開關、IPA 與標籤避讓。"
+    }
+  }
+}

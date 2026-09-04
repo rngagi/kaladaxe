@@ -26,10 +26,26 @@
 - License: public domain, https://www.naturalearthdata.com/about/terms-of-use/
 - Source: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_admin_0_countries.geojson
 - Download SHA-256: 239eec57ac17f100a11e2536cffc56752c318b50ae765b0918ff7aab4ce8f255.
-- Preparation: select the feature whose ADM0_A3 is TWN, retain its original MultiPolygon coordinates, replace unused administrative properties with name/source, and serialize as a one-feature GeoJSON FeatureCollection.
-- The resulting site/assets/taiwan.geojson contains Taiwan and the offshore polygons present in this source, including Penghu, Green Island, Orchid Island and Kinmen. It is a generalized outline, not a detailed map of every island.
+- Preparation: select the feature whose ADM0_A3 is TWN, remove the Kinmen polygon (118–118.6° E, 24.2–24.7° N), retain the remaining original MultiPolygon coordinates, replace unused administrative properties with name/source, and serialize as a one-feature GeoJSON FeatureCollection.
+- The resulting site/assets/taiwan.geojson contains Taiwan and the offshore polygons present in this source, including Penghu, Green Island and Orchid Island. Kinmen is excluded by design. It is a generalized outline, not a detailed map of every island.
 - Coordinates are longitude, latitude (WGS84); Leaflet input coordinates are latitude, longitude. No fictitious geographic outline is used.
 - No online tile provider, API key, or build-time download is required.
+
+## HydroRIVERS v1.0
+
+- Publisher: World Wildlife Fund US (WWF), in collaboration with McGill University.
+- Product: https://www.hydrosheds.org/products/hydrorivers
+- Asia shapefile: https://data.hydrosheds.org/file/HydroRIVERS/HydroRIVERS_v10_as_shp.zip
+- Retrieved: 2026-09-04.
+- Archive SHA-256: 29780b0a75f90024f22e7e2029e5e3045f7325cda0528db65c5cc4c864b98525.
+- Citation: Lehner, B., Grill G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes 27(15), 2171–2186. https://doi.org/10.1002/hyp.9740
+- License: HydroSHEDS version 1 License Agreement, Appendix A of https://data.hydrosheds.org/file/technical-documentation/HydroSHEDS_TechDoc_v1_4.pdf . This is a custom license, not public domain or CC-BY. The original document, including required attribution in Exhibit B, is included at site/assets/hydrosheds-license.pdf and linked from the website.
+- Copyright: World Wildlife Fund, Inc. (2006–2022); underlying contributors and terms are specified in the linked license. This kaladaxe map incorporates modified HydroSHEDS data under that license. The original Asia dataset is not redistributed.
+- Preparation: scripts/prepare_rivers.py selects island basins intersecting the local Natural Earth coastline plus a 0.03-degree buffer, then retains classical river order 1 (main stems) only, with total main-stem length at least 40 km (sum of LENGTH_KM across all main-stem reaches in a basin). Whole stems are retained; short individual reaches in a long river are not removed. This buffer only selects basins; it does not move or clip coordinates. Kinmen is excluded.
+- Adjacent reaches of each order are merged, retaining every bend; coordinates are rounded to five decimals. The resulting 685 reaches in 23 source-defined basins are represented as one MultiLineString feature in site/assets/taiwan-rivers.geojson. These basins are not Taiwan's administrative river-system classifications.
+- HydroRIVERS is derived from 15 arc-second data (about 500 metres at the equator); it does not supply river names or every small stream. It is an overview backdrop, not a current river survey.
+- Alignment check: the source coastline uses CRS84 and HydroRIVERS uses geographic WGS84; both enter the same Leaflet EPSG:3857 map without manual offsets. Sample northern river outlets differ from the generalized coastline by up to about 2.6 km in source coordinates. A browser check found less than 0.2 CSS px rounding error for both SVG panes, with no relative rendering shift. These source discrepancies remain visible; no snapping or clipping is applied.
+- One-time preparation requires pyshp and Shapely; routine builds and browser use require neither. No remote river service is called at runtime.
 
 ## Design and interaction references
 

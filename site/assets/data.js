@@ -11,6 +11,8 @@ export function createDataStore() {
   const cache = new Map();
   const pending = new Map();
   let knownConcepts = new Set();
+  let demo = null;
+  let demoRequest = null;
 
   async function loadIndex() {
     const [concepts, varieties, subgroups] = await Promise.all([
@@ -39,5 +41,21 @@ export function createDataStore() {
     return request;
   }
 
-  return { loadIndex, loadWord };
+  function loadDemo() {
+    if (demo) return Promise.resolve(demo);
+    if (demoRequest) return demoRequest;
+    demoRequest = readJSON(new URL("assets/debug/999.json", siteRoot))
+      .then((data) => {
+        if (data.concept?.id !== "debug_999" || data.concept.swadesh_number !== 999
+          || !Array.isArray(data.varieties) || !Array.isArray(data.subgroups) || !data.forms) {
+          throw new Error("示範語料格式不正確");
+        }
+        demo = data;
+        return data;
+      })
+      .finally(() => { demoRequest = null; });
+    return demoRequest;
+  }
+
+  return { loadIndex, loadWord, loadDemo };
 }
