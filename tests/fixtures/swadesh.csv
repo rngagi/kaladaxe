@@ -1,0 +1,14 @@
+concept_id,variety_id,orth,ipa,note
+water,test_proto_family,*TEST-1,*tɛs.tə,"合成測試資料：引號 ""測試"", 逗號與換行
+此處不是語言學資料。"
+water,test_proto_branch,*TEST-2,*tɛs.tə,"合成測試資料：引號 ""測試"", 逗號與換行
+此處不是語言學資料。"
+water,test_language,TEST-3,t͡sə̃ː,"合成測試資料：引號 ""測試"", 逗號與換行
+此處不是語言學資料。"
+water,test_dialect_a,TEST-4,t͡sə̃ː,"合成測試資料：引號 ""測試"", 逗號與換行
+此處不是語言學資料。"
+water,test_dialect_b,TEST-5,t͡sə̃ː,"合成測試資料：引號 ""測試"", 逗號與換行
+此處不是語言學資料。"
+water,test_long,TEST-long-long-long-long-long-form,t͡sə̃ː,"合成測試資料：引號 ""測試"", 逗號與換行
+此處不是語言學資料。"
+fire,test_language,TEST-FIRE,tɛst,<img src=x onerror=alert(1)> 必須呈現為純文字。

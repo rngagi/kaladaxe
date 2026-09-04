@@ -1,0 +1,32 @@
+{
+  "source": {
+    "title": "SYNTHETIC TEST FIXTURE — not linguistic evidence",
+    "url": "https://en.wikipedia.org/wiki/Swadesh_list#Swadesh_207_list",
+    "version": "Wikipedia revision 1367756650",
+    "revision_url": "https://en.wikipedia.org/w/index.php?title=Swadesh_list&oldid=1367756650#Swadesh_207_list",
+    "retrieved_at": "2026-09-04",
+    "translation_note": "繁體中文 gloss 由 kaladaxe 整理，保留英文詞目的語義區別，供人工校訂。",
+    "license": "English Wikipedia text: CC BY-SA 4.0; basic concept labels are factual data."
+  },
+  "test_data": true,
+  "items": [
+    {
+      "id": "water",
+      "swadesh_number": 150,
+      "gloss_en": "water",
+      "gloss_zh": "水"
+    },
+    {
+      "id": "fire",
+      "swadesh_number": 167,
+      "gloss_en": "fire",
+      "gloss_zh": "火"
+    },
+    {
+      "id": "eye",
+      "swadesh_number": 74,
+      "gloss_en": "eye",
+      "gloss_zh": "眼睛"
+    }
+  ]
+}

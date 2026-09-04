@@ -1,0 +1,72 @@
+[
+  {
+    "id": "test_proto_family",
+    "name": "測試原始語甲",
+    "native_name": null,
+    "type": "proto",
+    "subgroup_id": "test_family",
+    "latitude": 24.9,
+    "longitude": 120.2,
+    "location_note": "合成測試座標，不代表真實語言分布。"
+  },
+  {
+    "id": "test_proto_branch",
+    "name": "測試原始語乙",
+    "native_name": null,
+    "type": "proto",
+    "subgroup_id": "test_branch",
+    "latitude": 24.2,
+    "longitude": 120.2,
+    "location_note": "合成測試座標，不代表真實語言分布。"
+  },
+  {
+    "id": "test_language",
+    "name": "測試語言",
+    "native_name": "Test language",
+    "type": "language",
+    "subgroup_id": "test_branch",
+    "latitude": 24.48,
+    "longitude": 121.19,
+    "location_note": "合成測試座標，不代表真實語言分布。"
+  },
+  {
+    "id": "test_dialect_a",
+    "name": "測試方言甲",
+    "native_name": null,
+    "type": "dialect",
+    "subgroup_id": "test_dialects",
+    "latitude": 24.25,
+    "longitude": 121.1,
+    "location_note": "合成測試座標，不代表真實語言分布。"
+  },
+  {
+    "id": "test_dialect_b",
+    "name": "測試方言乙",
+    "native_name": null,
+    "type": "dialect",
+    "subgroup_id": "test_dialects",
+    "latitude": 24.25,
+    "longitude": 121.1,
+    "location_note": "合成測試座標，不代表真實語言分布。"
+  },
+  {
+    "id": "test_missing",
+    "name": "未收錄變體",
+    "native_name": null,
+    "type": "dialect",
+    "subgroup_id": "test_dialects",
+    "latitude": 23.1,
+    "longitude": 121.2,
+    "location_note": "合成測試座標，不代表真實語言分布。"
+  },
+  {
+    "id": "test_long",
+    "name": "很長的測試變體名稱",
+    "native_name": null,
+    "type": "dialect",
+    "subgroup_id": "test_dialects",
+    "latitude": 24.28,
+    "longitude": 121.12,
+    "location_note": "合成測試座標，不代表真實語言分布。"
+  }
+]
