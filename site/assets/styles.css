@@ -1,4 +1,25 @@
 @charset "UTF-8";
+@font-face {
+  font-family: "Gentium";
+  src: url("./fonts/gentium/Gentium-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Gentium";
+  src: url("./fonts/gentium/Gentium-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Gentium";
+  src: url("./fonts/gentium/Gentium-SemiBoldItalic.woff2") format("woff2");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
 :root {
   color-scheme: light;
   --paper: #fdfcfb;
@@ -7,6 +28,7 @@
   --red: #991b1b;
   --line: #e9e4e0;
   --serif: "Noto Serif TC", "Noto Serif", "Songti TC", "Songti SC", Georgia, serif;
+  --lexical: "Gentium", var(--serif);
   --sans: Inter, -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", sans-serif;
 }
 * { box-sizing: border-box; }
@@ -80,8 +102,8 @@ a { color: var(--red); text-underline-offset: 4px; }
 .result-button { display: block; width: 100%; text-align: left; border: 1px solid var(--line); background: #fff; padding: 12px; margin-top: 8px; }
 .result-button:hover, .result-button[aria-pressed="true"] { border-color: #ccaca0; background: #fdf7f3; }
 .result-name { display: flex; align-items: center; gap: 6px; font: 10px var(--sans); color: #89796d; margin-bottom: 6px; }
-.result-orth { font: 600 19px/1.4 var(--serif); color: var(--red); display: block; overflow-wrap: anywhere; }
-.result-ipa { display: block; font: 13px/1.6 var(--sans); color: #948275; overflow-wrap: anywhere; }
+.result-orth { font: 600 19px/1.4 var(--lexical); color: var(--red); display: block; overflow-wrap: anywhere; }
+.result-ipa { display: block; font: 13px/1.6 var(--lexical); color: #948275; overflow-wrap: anywhere; }
 .missing-section { margin-top: 18px; font: 11px/1.8 var(--sans); color: #9d938c; }
 .missing-section summary { cursor: pointer; }
 .missing-section ul { padding-left: 16px; }
@@ -116,7 +138,7 @@ a { color: var(--red); text-underline-offset: 4px; }
 .basemap-error { position: absolute; bottom: 55px; left: 25px; z-index: 500; padding: 10px 15px; background: #fff; border: 1px solid var(--line); font: 11px var(--sans); }
 .basemap-error button { margin: 0 0 0 10px; }
 .word-label { position: absolute; display: block; border: 0; border-radius: 3px; background: #fbfaf5d9; padding: 3px 5px; text-align: left; width: max-content; max-width: 220px; color: var(--ink); box-shadow: 0 1px 4px #463a2410; }
-.word-label .label-orth { display: block; font: italic 600 19px/1.25 var(--serif); overflow-wrap: anywhere; }
+.word-label .label-orth { display: block; font: italic 600 19px/1.25 var(--lexical); overflow-wrap: anywhere; }
 .word-label .label-name { display: block; color: #88786a; font: 10px/1.6 var(--sans); overflow-wrap: anywhere; }
 .word-label.selected { color: var(--red); background: #fff9f5; box-shadow: 0 0 0 1px #d8bab0; }
 .word-label:focus-visible { outline: 2px solid var(--red); }
@@ -126,12 +148,12 @@ a { color: var(--red); text-underline-offset: 4px; }
 .detail-card h2 { font-size: 23px; margin: 18px 0 7px; padding-right: 10px; overflow-wrap: anywhere; }
 .native-name { font-size: 12px; color: #a08b7a; margin: 0 0 19px; overflow-wrap: anywhere; }
 .form-box { padding: 16px; border: 1px solid var(--line); border-radius: 5px; background: #fcfaf7; }
-.detail-orth { margin: 8px 0 16px; font: 600 28px/1.3 var(--serif); color: var(--red); overflow-wrap: anywhere; }
-.detail-ipa { font: 19px/1.5 var(--sans); color: #9e4c41; margin: 6px 0 0; overflow-wrap: anywhere; }
+.detail-orth { margin: 8px 0 16px; font: 600 28px/1.3 var(--lexical); color: var(--red); overflow-wrap: anywhere; }
+.detail-ipa { font: 19px/1.5 var(--lexical); color: #9e4c41; margin: 6px 0 0; overflow-wrap: anywhere; }
 .detail-card dl { margin: 16px 0 0; font: 11px/1.8 var(--sans); }
 .detail-card dt { color: #a18f80; font-size: 10px; margin-top: 12px; }
 .detail-card dd { margin: 3px 0 0; color: #685345; overflow-wrap: anywhere; }
-.detail-note { font: 12px/1.9 var(--serif); white-space: pre-wrap; overflow-wrap: anywhere; padding: 13px; background: #faf7f3; border-radius: 3px; }
+.detail-note { font: 12px/1.9 var(--lexical); white-space: pre-wrap; overflow-wrap: anywhere; padding: 13px; background: #faf7f3; border-radius: 3px; }
 .detail-footer { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 13px; display: flex; justify-content: space-between; gap: 8px; color: #a79280; font: 9px var(--sans); letter-spacing: 1px; }
 .detail-footer code { word-break: break-all; }
 dialog { border: 1px solid var(--line); border-radius: 9px; padding: 36px; max-width: min(540px,calc(100vw - 28px)); max-height: 85dvh; box-shadow: 0 30px 80px #33231322; color: var(--ink); }

@@ -114,6 +114,8 @@ Natural Earth 島嶼輪廓與 HydroRIVERS 水系都使用 WGS84，投影至 Leaf
 
 水系保留 HydroRIVERS v1.0 ORD_CLAS 1、全長至少 40 公里的主流。換來源時執行 scripts/prepare_rivers.py，需 pyshp 與 Shapely；日常建置使用已整理的本地 GeoJSON。底圖包含澎湖、綠島與蘭嶼。
 
+語料、祖語形式、IPA 與詞形備註使用隨網站提供的 Gentium 7.000 襯線字體，含原生正常體、半粗體及半粗斜體；中文沿用系統襯線字體。字型載入完成後會重新排列地圖標籤。
+
 Leaflet 與地理資料隨網站發布；來源、授權見 THIRD_PARTY_NOTICES.md。
 
 ## 瀏覽器測試

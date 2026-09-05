@@ -273,7 +273,10 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   observer.observe(element);
   const detail = element.parentElement.querySelector("#detail");
   if (detail) observer.observe(detail);
-  if (document.fonts) document.fonts.ready.then(schedule);
+  if (document.fonts) {
+    document.fonts.ready.then(schedule);
+    document.fonts.addEventListener("loadingdone", schedule);
+  }
   loadBasemap();
   loadRivers();
   return { setData, select, schedule, loadBasemap, loadRivers, reset };

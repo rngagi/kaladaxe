@@ -50,3 +50,11 @@
 - The user-provided langmap word map was inspected for per-word loading, URL synchronization, selection priority and bounded label placement.
 - kaladaxe implements these interaction ideas independently. It does not copy langmap's application code, language datasets, fonts, or simulated-annealing layout.
 - The application uses system font stacks; there are no downloaded web fonts.
+
+## Gentium 7.000
+
+- Source: https://software.sil.org/gentium/
+- Official archive: https://software.sil.org/downloads/r/gentium/Gentium-7.000.zip
+- Archive SHA-256: 313e64963ba27851356060a725d36ce01680e5c5c63f46e4b40f15741c043e21.
+- Unmodified Regular, SemiBold and SemiBoldItalic WOFF2 files are served locally from site/assets/fonts/gentium/.
+- SIL Open Font License 1.1; copyright and full license are included in site/assets/fonts/gentium/OFL.txt.
