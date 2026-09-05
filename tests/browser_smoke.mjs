@@ -100,16 +100,25 @@ try {
   page.on("response", (response) => { if (response.status() >= 400) badResponses.push(response.url()); });
   page.on("request", (request) => requests.push(request.url()));
 
-  await check("production root, 207 concepts, empty state, local assets", async () => {
+  await check("production root, 214 concepts, 42 varieties, local assets", async () => {
     await page.goto(base + "/");
     await settled(page);
-    assert.equal(await page.locator(".concept-button").count(), 207);
+    assert.equal(await page.locator(".concept-button").count(), 214);
     assert.equal(await page.locator("#current-zh").textContent(), "水");
-    assert.equal(await page.locator("#notice-title").textContent(), "詞彙，正待收錄");
+    assert.ok(await page.locator("#map-notice").isHidden());
+    assert.ok(!(await page.locator("body").innerText()).toLowerCase().includes("swadesh"));
     assert.equal(await page.locator(".test-banner").count(), 0);
-    assert.equal(await page.locator(".map-pin").count(), 0);
+    assert.equal(await page.locator(".map-pin").count(), 42);
     assert.deepEqual(requests.filter((url) => /\/data\/words\//.test(url)).map((url) => new URL(url).pathname), ["/data/words/water.json"]);
     assert.ok(requests.every((url) => url.startsWith(base)), "unexpected external dependency");
+    await page.locator('#results [data-select-variety="ami_nt"]').click();
+    assert.ok(await page.locator("#detail-ipa").isHidden());
+    assert.ok(await page.locator("#detail-ipa-label").isHidden());
+    assert.ok((await page.locator("#detail-orth").textContent()).length > 0);
+    await page.locator("#detail-close").click();
+    await page.locator("#show-proto").check();
+    assert.equal(await page.locator(".map-pin").count(), 44);
+    await page.locator("#show-proto").uncheck();
     await page.screenshot({ path: join(screenshots, "production-desktop.png"), fullPage: true });
   });
   await check("complete geography survives zoom, offscreen pans and an unfinished drag", async () => {
@@ -125,14 +134,14 @@ try {
         "const map = L.map(element,", "const map = window.__testAtlas = L.map(element,") });
     });
     await atlasPage.goto(base + "/");
-    await atlasPage.waitForFunction(() => document.querySelectorAll(".geography-overlay path").length === 2);
+    await atlasPage.waitForFunction(() => document.querySelectorAll(".geography-overlay > path").length === 2);
     await atlasPage.evaluate(() => {
-      window.__geographyPaths = [...document.querySelectorAll(".geography-overlay path")];
+      window.__geographyPaths = [...document.querySelectorAll(".geography-overlay > path")];
       window.__geographyData = window.__geographyPaths.map((path) => path.getAttribute("d"));
     });
     async function intact() {
       const result = await atlasPage.evaluate(() => {
-        const paths = [...document.querySelectorAll(".geography-overlay path")];
+        const paths = [...document.querySelectorAll(".geography-overlay > path")];
         return {
           same: paths.every((path, index) => path === window.__geographyPaths[index]
             && path.getAttribute("d") === window.__geographyData[index]),
@@ -145,6 +154,14 @@ try {
       assert.deepEqual(result.parts, [7, 23]);
       assert.deepEqual(result.overflow, ["visible", "visible"]);
       assert.deepEqual(result.strokes, ["non-scaling-stroke", "non-scaling-stroke"]);
+      const clipped = await atlasPage.evaluate(() => {
+        const river = document.querySelector(".leaflet-atlasRivers-pane .geography-overlay > path");
+        const coast = document.querySelector(".leaflet-overlay-pane .geography-overlay > path");
+        const clip = document.querySelector("#atlas-river-land path");
+        return river.getAttribute("clip-path") === "url(#atlas-river-land)"
+          && clip?.getAttribute("d") === coast.getAttribute("d");
+      });
+      assert.ok(clipped, "rivers must remain clipped to the projected coastline after zoom/pan");
     }
     for (const zoom of [9, 12, 14]) {
       await atlasPage.evaluate((zoom) => window.__testAtlas.setView([25.1, 121.5], zoom, {animate: false}), zoom);
@@ -154,8 +171,8 @@ try {
       const map = window.__testAtlas, rect = map.getContainer().getBoundingClientRect();
       const values = [];
       for (const [file, selector] of [
-        ["taiwan.geojson", ".leaflet-overlay-pane .geography-overlay path"],
-        ["taiwan-rivers.geojson", ".leaflet-atlasRivers-pane .geography-overlay path"]]) {
+        ["taiwan.geojson", ".leaflet-overlay-pane .geography-overlay > path"],
+        ["taiwan-rivers.geojson", ".leaflet-atlasRivers-pane .geography-overlay > path"]]) {
         const data = await (await fetch("./assets/" + file)).json();
         let coords = data.features[0].geometry.coordinates;
         while (Array.isArray(coords[0])) coords = coords[0];
@@ -187,7 +204,7 @@ try {
     await atlasPage.close();
   });
   await check("Chinese / English / number search, invalid URL fallback", async () => {
-    for (const query of ["眼睛", "eye", "74"]) {
+    for (const query of ["眼睛", "eye", "69"]) {
       await page.locator("#concept-search").fill(query);
       assert.equal(await page.locator('[data-concept-id="eye"]').count(), 1);
     }
@@ -231,7 +248,7 @@ try {
     }
     await page.locator('#results [data-select-variety="test_proto_branch"]').click();
     assert.match(await page.locator("#detail-type").textContent(), /原始語言/);
-    assert.match(await page.locator("#detail-metadata").textContent(), /非祖居地推定/);
+    assert.match(await page.locator("#detail-metadata").textContent(), /地圖位置/);
     await page.locator("#detail-close").click();
     await layoutCheck(page);
     const before = await page.locator(".leaflet-atlasLines-pane path").count();
@@ -321,7 +338,7 @@ try {
     await settled(retry);
     await retry.locator("#rivers-error").waitFor({ state: "visible" });
     await retry.locator("#rivers-retry").click();
-    await retry.locator(".leaflet-atlasRivers-pane path").first().waitFor({ state: "attached" });
+    await retry.locator(".leaflet-atlasRivers-pane .geography-overlay > path").first().waitFor({ state: "attached" });
     assert.equal(riverCount, 2);
     assert.ok(await retry.locator("#basemap-error").isVisible());
     await Promise.all([retry.waitForResponse((res) => res.url().endsWith("taiwan.geojson")), retry.locator("#basemap-retry").click()]);
@@ -334,22 +351,22 @@ try {
     await settled(page);
     assert.equal(new URL(page.url()).searchParams.get("concept"), "water");
     assert.ok(!requests.some((url) => url.endsWith("/debug/999.json")));
-    await page.locator(".leaflet-atlasRivers-pane path").first().waitFor({ state: "attached" });
-    assert.equal(await page.locator(".leaflet-atlasRivers-pane path").count(), 1);
-    assert.deepEqual(await page.locator(".leaflet-atlasRivers-pane path").evaluateAll(
+    await page.locator(".leaflet-atlasRivers-pane .geography-overlay > path").first().waitFor({ state: "attached" });
+    assert.equal(await page.locator(".leaflet-atlasRivers-pane .geography-overlay > path").count(), 1);
+    assert.deepEqual(await page.locator(".leaflet-atlasRivers-pane .geography-overlay > path").evaluateAll(
       (paths) => paths.map((path) => path.getAttribute("fill"))), ["none"]);
     assert.equal(await page.locator(".ocean-label").count(), 0);
     const trigger = page.locator("#debug-trigger");
     assert.equal(await trigger.evaluate((el) => getComputedStyle(el).cursor), "default");
     for (let i = 0; i < 4; i++) await trigger.click();
-    assert.equal(await page.locator("#current-number").textContent(), "150");
+    assert.equal(await page.locator("#current-number").textContent(), "145");
     assert.ok(!requests.some((url) => url.endsWith("/debug/999.json")));
     await trigger.click();
     await page.waitForFunction(() => document.getElementById("current-number").textContent === "999");
     assert.equal(await page.locator(".map-pin").count(), 9);
     assert.equal(await page.locator(".map-pin.proto").count(), 0);
     assert.ok(await page.locator("#demo-notice").isVisible());
-    assert.equal(await page.locator(".concept-button").count(), 207);
+    assert.equal(await page.locator(".concept-button").count(), 214);
     await page.locator("#concept-search").fill("999");
     assert.equal(await page.locator(".concept-button").count(), 0);
     await page.locator("#concept-search").fill("");
@@ -372,14 +389,14 @@ try {
     assert.equal(await page.locator(".map-pin").count(), 9);
     await pick(page, "water");
     assert.ok(await page.locator("#demo-notice").isHidden());
-    assert.equal(await page.locator(".map-pin").count(), 0);
-    assert.equal(await page.locator("#variety-count").textContent(), "0");
+    assert.equal(await page.locator(".map-pin").count(), 42);
+    assert.equal(await page.locator("#variety-count").textContent(), "42");
     for (let i = 0; i < 5; i++) await trigger.click();
     await page.waitForFunction(() => document.getElementById("current-number").textContent === "999");
     assert.equal(requests.filter((url) => url.endsWith("/debug/999.json")).length, 1);
     await page.reload();
     await settled(page);
-    assert.equal(await page.locator("#current-number").textContent(), "150");
+    assert.equal(await page.locator("#current-number").textContent(), "145");
     assert.equal(await page.locator("#show-proto").isChecked(), false);
   });
   await check("demo download failure retries and stale activation is discarded", async () => {

@@ -41,6 +41,7 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   let baseRequest = null;
   let rivers = null;
   let riverRequest = null;
+  let landGeometry = null;
 
   // Project fixed geography once into a shared Web Mercator SVG viewport.
   // SVGOverlay scales/translates complete paths; panning never clips or rebuilds them.
@@ -78,7 +79,30 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
       for (const [name, value] of Object.entries(style)) path.setAttribute(name, value);
       svg.append(path);
     }
-    return L.svgOverlay(svg, bounds, { pane, interactive: false, className: "geography-overlay" });
+    const overlay = L.svgOverlay(svg, bounds, { pane, interactive: false, className: "geography-overlay" });
+    if (pane === "atlasRivers") {
+      const defs = document.createElementNS(ns, "defs");
+      const clip = document.createElementNS(ns, "clipPath");
+      clip.id = "atlas-river-land";
+      clip.setAttribute("clipPathUnits", "userSpaceOnUse");
+      defs.append(clip);
+      svg.prepend(defs);
+      for (const path of svg.querySelectorAll(":scope > path")) {
+        path.setAttribute("clip-path", "url(#atlas-river-land)");
+      }
+      overlay.setLandClip = (land) => {
+        clip.replaceChildren();
+        if (!land) return;
+        for (const feature of land.features) {
+          const path = document.createElementNS(ns, "path");
+          path.setAttribute("d", pathData(feature.geometry));
+          path.setAttribute("clip-rule", "evenodd");
+          clip.append(path);
+        }
+      };
+      overlay.setLandClip(landGeometry);
+    }
+    return overlay;
   }
 
   function loadRivers() {
@@ -111,6 +135,8 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
         return response.json();
       })
       .then((geojson) => {
+        landGeometry = geojson;
+        rivers?.setLandClip(geojson);
         if (basemap) basemap.remove();
         basemap = geographyOverlay(geojson, "overlayPane", {
           stroke: "#c9c2b7", "stroke-width": 1.3, fill: "#e8e3d7", "fill-opacity": 0.46,
@@ -213,7 +239,7 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
       label.dataset.varietyId = variety.id;
       label.style.pointerEvents = "auto";
       label.style.visibility = "hidden";
-      label.setAttribute("aria-label", variety.name + "：" + form.orth + "，" + form.ipa);
+      label.setAttribute("aria-label", variety.name + "：" + form.orth + (form.ipa?.trim() ? "，" + form.ipa : ""));
       const orth = document.createElement("span");
       orth.className = "label-orth";
       orth.dir = "auto";
