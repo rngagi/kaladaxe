@@ -1,15 +1,12 @@
 # Third-party sources and notices
 
-## Swadesh concepts
+## Vocabulary data
 
-- Source: https://en.wikipedia.org/wiki/Swadesh_list#Swadesh_207_list
-- Pinned version: https://en.wikipedia.org/w/index.php?title=Swadesh_list&oldid=1367756650#Swadesh_207_list
-- Retrieved: 2026-09-04.
-- The 207 English concept labels and their sequence were extracted from this section. Stable concept IDs and Traditional Chinese glosses were added for kaladaxe; the Chinese glosses are editable project translations.
-- Attribution: English Wikipedia contributors, “Swadesh list”.
-- Wikipedia text license: Creative Commons Attribution-ShareAlike 4.0, https://creativecommons.org/licenses/by-sa/4.0/ . Ordinary factual labels are recorded as concept data; retain attribution for the source and any adapted text.
-- Downloaded HTML SHA-256: 86aa8188fae00be4c22477c1b9a2050030effa9f6ce158598408a82154c239ce.
-- Runtime and routine builds use the checked-in concept catalog; they never scrape Wikipedia.
+- The concept catalog is kaladaxe's custom 基礎詞彙200+ (214 concepts).
+- Modern forms: 財團法人原住民族語言研究發展基金會《2026年學習詞表》, 42 user-provided Excel files. Source filenames, sheet names, rows and original glosses are retained in source/learning.csv and source/word_sources.csv.
+- Language identifiers follow klokah commands/kl.py (dialect_names and dialect_mapping).
+- Proto forms: Robert Blust and Stephen Trussel, Austronesian Comparative Dictionary, CLDF edition: https://github.com/lexibank/acd . Local acd-2.0 metadata and LICENSE specify CC BY 4.0: https://creativecommons.org/licenses/by/4.0/ .
+- ACD Form IDs, original glosses and source levels are retained in source/word_sources.csv. PMP copies from PAn are explicitly marked. Orthography is retained; no IPA is inferred.
 
 ## Leaflet 1.9.4
 
@@ -44,7 +41,7 @@
 - Preparation: scripts/prepare_rivers.py selects island basins intersecting the local Natural Earth coastline plus a 0.03-degree buffer, then retains classical river order 1 (main stems) only, with total main-stem length at least 40 km (sum of LENGTH_KM across all main-stem reaches in a basin). Whole stems are retained; short individual reaches in a long river are not removed. This buffer only selects basins; it does not move or clip coordinates. Kinmen is excluded.
 - Adjacent reaches of each order are merged, retaining every bend; coordinates are rounded to five decimals. The resulting 685 reaches in 23 source-defined basins are represented as one MultiLineString feature in site/assets/taiwan-rivers.geojson. These basins are not Taiwan's administrative river-system classifications.
 - HydroRIVERS is derived from 15 arc-second data (about 500 metres at the equator); it does not supply river names or every small stream. It is an overview backdrop, not a current river survey.
-- Alignment check: the source coastline uses CRS84 and HydroRIVERS uses geographic WGS84; both enter the same Leaflet EPSG:3857 map without manual offsets. Sample northern river outlets differ from the generalized coastline by up to about 2.6 km in source coordinates. The full SVG overlays share one Web Mercator viewport; browser checks verify their projected coordinates agree with Leaflet within 1.5 CSS px of rounding error at high zoom. These source discrepancies remain visible; no snapping or clipping is applied.
+- Alignment check: the source coastline uses CRS84 and HydroRIVERS uses geographic WGS84; both enter the same Leaflet EPSG:3857 map without manual offsets. Sample northern river outlets differ from the generalized coastline by up to about 2.6 km in source coordinates. The full SVG overlays share one Web Mercator viewport; browser checks verify their projected coordinates agree with Leaflet within 1.5 CSS px of rounding error at high zoom. The original river coordinates are retained. At display time, an SVG clipPath built from the projected land geometry masks river strokes outside the coastline; this mask follows the same zoom/pan transform.
 - One-time preparation requires pyshp and Shapely; routine builds and browser use require neither. No remote river service is called at runtime.
 
 ## Design and interaction references

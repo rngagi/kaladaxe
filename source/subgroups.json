@@ -1,1 +1,94 @@
-[]
+[
+  {
+    "id": "austronesian",
+    "name": "南島語系",
+    "parent_id": null,
+    "proto_variety_id": "pan"
+  },
+  {
+    "id": "malayo_polynesian",
+    "name": "馬來玻里尼西亞語族",
+    "parent_id": "austronesian",
+    "proto_variety_id": "pmp"
+  },
+  {
+    "id": "ami",
+    "name": "阿美語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "ata",
+    "name": "泰雅語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "say",
+    "name": "賽夏語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "tha",
+    "name": "邵語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "sed",
+    "name": "賽德克語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "bun",
+    "name": "布農語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "pai",
+    "name": "排灣語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "ruk",
+    "name": "魯凱語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "trv",
+    "name": "太魯閣語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "kav",
+    "name": "噶瑪蘭語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "tso",
+    "name": "鄒語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "knv",
+    "name": "卡那卡那富語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "hla",
+    "name": "拉阿魯哇語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "yam",
+    "name": "雅美語",
+    "parent_id": "malayo_polynesian"
+  },
+  {
+    "id": "sak",
+    "name": "撒奇萊雅語",
+    "parent_id": "austronesian"
+  },
+  {
+    "id": "puy",
+    "name": "卑南語",
+    "parent_id": "austronesian"
+  }
+]

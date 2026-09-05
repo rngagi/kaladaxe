@@ -1,10 +1,12 @@
 # kaladaxe
 
-台灣原住民族語言 Swadesh 207 詞彙地圖。純 HTML/CSS、Vanilla JavaScript 與 Leaflet；Python 只在建置時執行，不需要 backend、資料庫、CMS、npm 或 API key。
+臺灣原住民族語言「基礎詞彙200+」地圖。自訂詞表含 214 個概念、42 語言別，以及原始南島語（PAn）與原始馬來玻里尼西亞語（PMP）。
 
-## 本機建置與預覽
+網站使用 HTML/CSS、Vanilla JavaScript 與 Leaflet；Python 在建置時產生靜態資料。
 
-需要 Python 3.10 以上版本。在專案根目錄執行：
+## 建置與預覽
+
+需要 Python 3.10 以上版本。
 
 ~~~sh
 python3 -m unittest discover -s tests -v
@@ -12,97 +14,84 @@ python3 scripts/build.py
 python3 -m http.server 8000 --directory dist
 ~~~
 
-開啟 http://localhost:8000/ 。請透過 HTTP 預覽，直接開啟 HTML 檔案的 file:// 網址無法正確載入模組與 JSON。
+開啟 http://localhost:8000/ 。網站透過 HTTP 載入 JavaScript 模組與 JSON。
 
-第一版已整理 207 個概念，正式族語資料留白。地圖顯示「詞彙，正待收錄」是正常狀態；不會將合成資料當作真實詞形展示。
+## 詞表與語料
 
-## 人工維護資料
+詞表由 kaladaxe 自行編排。原有概念 ID 保持固定，數詞移至最後，依一至十、二十、一百排列，總計 214 詞。內部欄位 swadesh_number 與檔名 swadesh.csv 沿用既有格式，前端統一顯示「基礎詞彙200+」。重新編號後，water 為第 145 詞；分享網址仍使用 ?concept=water。
 
-只有 source/ 是正式資料來源。dist/ 由建置器產生，不要手動修改，也不納入 Git。
+語料來源為使用者提供的原住民族語言研究發展基金會《2026年學習詞表》42 份 Excel，以及 acd-2.0/cldf/forms.csv。
 
 | 檔案 | 用途 |
 | --- | --- |
-| source/concepts.json | 固定概念 ID、Swadesh 編號、中英文 gloss、詞表來源 |
-| source/subgroups.json | 手動定義的多層分類樹 |
-| source/varieties.json | 語言／方言／proto 的名稱、分類、座標、metadata |
-| source/swadesh.csv | 書寫形式 orth、IPA 及備註 |
+| source/concepts.json | 自訂概念 ID、編號、中英文詞義 |
+| source/subgroups.json | 語言分類與祖語關聯 |
+| source/varieties.json | 42 語言別與 PAn、PMP 的代碼、名稱、座標 |
+| source/swadesh.csv | 地圖使用的詞形、選填 IPA 與備註 |
+| source/learning.csv | Excel 的 45,948 筆詞條與原始中文、備註、檔名、工作表、列號 |
+| source/word_sources.csv | 每個匯入詞形的來源紀錄，可追溯 Excel 詞條或 ACD Form ID |
+| source/missing.csv | 尚未對應的概念與語言別組合 |
+| source/import_summary.json | 匯入數量、各語言別涵蓋率、PMP 補入項目與來源檔案 SHA-256 |
+| source/import/ | 可編輯的中文詞義對應與 ACD Form ID 選擇 |
 
-建議先定義語群，再加入 variety，最後填詞彙。proto 關聯與 variety 可在同一次修改中加入。
+目前地圖收錄 8,396 筆概念 × 語言別組合，42 語言別各涵蓋 187–192 詞；PAn 183 詞，PMP 206 詞。PMP 的雲、唱歌、雪、二十以對應 PAn 形式補入，各詞備註及來源表皆有標記。無來源形式的概念留在缺項清單。
 
-### 空白模板
+語意對應採明列的中文詞義與 ACD Form ID。詞條包含多個形式時保留來源拼寫；同一概念有多個來源詞條時以「 / 」並列，原始詞義與使用範圍保存在備註。Excel 的「無此詞彙」保留於 learning.csv，地圖不將它當作詞形。來源未附 IPA，匯入時留白。
 
-templates/ 提供四份可建置的空白模板：swadesh.csv、concepts.json、varieties.json、subgroups.json。JSON 陣列留空；概念模板保留 source 與 items 外層結構。使用者可自行填入下列記錄結構。
+## 手動維護
 
-**source/concepts.json 已有完整 207 概念，不要為了開始填族語而用空白概念模板覆蓋它。**
+source/ 是正式資料來源；dist/ 為產生的網站，未納入 Git。可直接編輯 source/varieties.json 的 latitude、longitude、location_note，或修改 source/swadesh.csv 的詞形。
 
-概念記錄：
-
-~~~json
-{
-  "id": "water",
-  "swadesh_number": 150,
-  "gloss_en": "water",
-  "gloss_zh": "水"
-}
-~~~
-
-整份概念檔為 {"source": {...}, "items": [...]}。詞表採 Wikipedia「Swadesh 207 list」指定版本，來源連結、revision、日期保存在 source。英文保留單複數、詞義與詞性區別；繁體中文為本專案整理，供人工校訂。概念 ID 不隨 gloss 更名而改變。
-
-語群記錄（以下皆為結構示例，不代表實際分類）：
-
-~~~json
-[
-  {"id": "sample_family", "name": "示例語系", "parent_id": null},
-  {"id": "sample_group", "name": "示例語群", "parent_id": "sample_family",
-   "proto_variety_id": "sample_proto"}
-]
-~~~
-
-- 空分類陣列有效；非空分類樹必須有一個根節點。
-- 每個群只有一個 parent_id，不得形成循環。
-- proto_variety_id 可省略或為 null。
-- 指定的重建語必須是 type: "proto"，且它的 subgroup_id 必須指回此群。
-- 分類表達人工採用的語言關係，不自動推導詞源或同源詞。
-
-variety 記錄：
-
-~~~json
-{
-  "id": "sample_proto",
-  "name": "示例重建語",
-  "native_name": null,
-  "type": "proto",
-  "subgroup_id": "sample_group",
-  "latitude": 24.0,
-  "longitude": 120.5,
-  "iso639_3": null,
-  "glottocode": null,
-  "location_note": "僅作展示的手動位置。"
-}
-~~~
-
-- type 只接受 language、dialect、proto。
-- 名稱必填，native_name 可為 null；ISO 與 Glottocode 為可選文字，不是主鍵。
-- latitude 與 longitude 為必填數字，使用 WGS84 經緯度。座標應分別在 −90～90、−180～180 範圍內。
-- 所有 proto 座標都只表示「展示位置」，不表達推定祖居地。
-- 地理位置可以重複；所有形式仍可由清單逐筆查看。
-- ID 使用小寫英文字母開頭，其後只使用小寫英文字母、數字或底線。
-
-CSV 表頭固定為：
+CSV 表頭：
 
 ~~~csv
 concept_id,variety_id,orth,ipa,note
 ~~~
 
-每個 concept_id × variety_id 最多一筆；orth 與 ipa 都不可空白。未知或尚不完整的形式先不建立列，note 可空。UTF-8（含 BOM）皆支援。試算表軟體可另存為 UTF-8 CSV。
+每個 concept_id × variety_id 最多一筆。orth 必填，ipa、note 可留白；未提供 IPA 時，前端隱藏音標欄位。CSV 支援 UTF-8、BOM、引號、逗號與欄位內換行。拼寫、星號與音標按資料原樣顯示。
 
-逗號、引號或換行需按 CSV 規則引用，例如此合成示例：
+概念記錄：
 
-~~~csv
-water,sample_proto,*TEST,*tɛst,"示例備註，""引號""。"
+~~~json
+{"id":"water","swadesh_number":145,"gloss_en":"water","gloss_zh":"水"}
 ~~~
 
-建置不會自動加上星號、斜線或方括號，也不會正規化／改寫 IPA、大小寫、組合附加符號。請在 orth／ipa 原樣填入希望顯示的完整形式。metadata 與 note 是純文字，不支援 HTML。
+語言別記錄：
+
+~~~json
+{
+  "id": "ami_nt",
+  "name": "南勢阿美語",
+  "native_name": null,
+  "type": "dialect",
+  "subgroup_id": "ami",
+  "latitude": 23.97,
+  "longitude": 121.60,
+  "klokah_code": "ami_nt",
+  "klokah_number": 1,
+  "location_note": "花蓮吉安一帶（概略座標，可調整）"
+}
+~~~
+
+type 可為 language、dialect、proto。subgroup_id 指向分類；群的 parent_id 形成單一根節點的樹，proto_variety_id 可指定該群的祖語。ID 使用小寫英文字母開頭，後接小寫英文字母、數字或底線。
+
+42 語言別代碼取自 klokah/commands/kl.py。座標以代表聚落附近的位置初填，供後續調整；區域分布參考 [原民會族群分布](https://www.cip.gov.tw/zh-tw/menu/data-list/6726E5B80C8822F9-info.html?cumid=6726E5B80C8822F9)、[布農族介紹](https://www.cip.gov.tw/zh-tw/tribe/grid-list/F39C8394699DD2D6D0636733C6861689/info.html?cumid=FF8E0A73EBC8DFA2A698DC8F96468B9E)與[魯凱族介紹](https://www.cip.gov.tw/zh-tw/tribe/grid-list/409F703B4E592A82D0636733C6861689/info.html?cumid=D0636733C6861689)。數值為人工概估，並非上述來源提供的精確座標。PAn 設在台南新化（23.04, 120.31），PMP 設在台東市近海（22.75, 121.20）。
+
+分類先以語言名稱分組於南島語系之下，雅美語置於馬來玻里尼西亞語族；多層分類可直接在 subgroups.json 調整。
+
+### 重新匯入
+
+匯入工具需 openpyxl 讀取 XLSX；例行建置與測試只需 Python 標準函式庫。匯入工具讀取本地來源，依 source/import/ 的對應重建五份 CSV/JSON 產物，不更動語言座標或概念表。
+
+~~~sh
+python3 scripts/import_lexicon.py \
+  --excel-dir /path/to/excel \
+  --acd-dir /path/to/acd-2.0 \
+  --klokah-dir /path/to/klokah \
+  --out .work/reimport
+~~~
+
+比對新產物後再放回 source/；省略 --out 會直接更新 source/ 中的產生檔，包括手動編輯過的詞形 CSV。對應原則見 source/import/README.md。
 
 ### 資料驗證
 
@@ -110,83 +99,35 @@ water,sample_proto,*TEST,*tɛst,"示例備註，""引號""。"
 python3 scripts/build.py --check
 ~~~
 
-未知 ID、重複詞彙組合、缺必要欄位、非法座標、分類循環、錯誤重建語關聯均阻止建置，並指出檔案與行號或 ID。CSV 跨行欄位的行號指向該筆資料的結束行。
+建置器檢查概念與語言 ID、重複詞形、必要欄位、座標、分類循環及祖語關聯。通過後才替換 dist/。templates/ 提供空白資料格式，tests/fixtures/ 提供獨立的合成測試資料。
 
-建置器先完成驗證並準備暫存產物，再替換輸出。驗證失敗不更動上一次產物；成功建置會移除舊產物。輸出必須是新目錄，或包含 .kaladaxe-build 標記的既有建置目錄，不可與 source/、site/ 等來源重疊。
+## 地圖操作與地理圖層
 
-## 隱藏示範語料
+- 搜尋中文、英文、編號；預設顯示「水」。
+- 「語言別」與「原始語言」開關同步控制地圖、清單及詳情。
+- 展開分類樹，按「查看此語群」篩選子群與祖語。
+- 點選地圖或清單查看詞形、來源、IPA 與位置。
+- 文字標籤避讓時以細線連回原座標；完整詞形也可由清單查看。
+- 分享網址支援重新整理及上一頁／下一頁。
 
-左下角 k 在每次間隔不超過三秒的情況下連按五次，按需載入獨立的 site/assets/debug/999.json。入口維持一般游標。示範編號為 999，包含 12 筆虛構 variety 與 orth／IPA，畫面明示為合成語料；不會加入 207 詞選單、搜尋結果、正式 source/ 或分享網址。
+Natural Earth 島嶼輪廓與 HydroRIVERS 水系都使用 WGS84，投影至 Leaflet EPSG:3857。兩層共用 SVG 座標範圍。水系依底圖海岸加上 SVG clipPath，河口顯示止於海岸；縮放、拖曳與視窗調整沿用完整路徑，原始 GeoJSON 座標保留。底圖載入失敗時，水系等待海岸遮罩，重試底圖後恢復顯示。
 
-切回任何一般詞項即恢復正式資料。重新整理也會離開示範。此靜態檔案隨網站發布，隱藏入口僅為除錯操作，並非存取控制。需要修改示範時直接編輯該 JSON；tests/fixtures 則持續只用於獨立測試。
+水系保留 HydroRIVERS v1.0 ORD_CLAS 1、全長至少 40 公里的主流。換來源時執行 scripts/prepare_rivers.py，需 pyshp 與 Shapely；日常建置使用已整理的本地 GeoJSON。底圖包含澎湖、綠島與蘭嶼。
 
-## 合成資料預覽與測試
+Leaflet 與地理資料隨網站發布；來源、授權見 THIRD_PARTY_NOTICES.md。
 
-~~~sh
-python3 scripts/build.py --source tests/fixtures --out .work/preview/repo
-python3 -m http.server 8001 --directory .work/preview
-~~~
-
-開啟 http://localhost:8001/repo/ 。頁面上方有「合成測試資料」提示，包含重建語、多層語群、同座標、長詞形、缺詞與特殊字元。這些 fixtures 不會進入正式 dist/。
-
-Python 測試只需標準函式庫。另提供 tests/browser_smoke.mjs 以 Playwright 實際驗證網站根目錄與 /repo/、按需載入、重試、競態、標籤排列、選取、篩選及手機版。這是可選的開發測試工具，網站建置與發布不依賴 Node。
-
-若開發環境已有 Playwright：
+## 瀏覽器測試
 
 ~~~sh
 node tests/browser_smoke.mjs
 ~~~
 
-如果 Playwright 安裝在其他位置，設定 PLAYWRIGHT_MODULE 為套件絕對目錄；使用系統 Chrome 時可設定 CHROME_EXECUTABLE 為瀏覽器執行檔路徑。PYTHON 可指定 Python 執行檔。測試腳本自行建立暫存網站與本機 HTTP server，結束後清除；截圖輸出於 .work/browser-smoke/。
+需 Playwright；PLAYWRIGHT_MODULE 可指定套件目錄，CHROME_EXECUTABLE 可指定 Chrome，PYTHON 可指定 Python。測試涵蓋正式資料、子路徑、搜尋、篩選、IPA 留白、下載失敗重試、請求競態、地圖遮罩、標籤與手機畫面。截圖輸出至 .work/browser-smoke/。
 
-## 網站操作
-
-- 搜尋詞項編號、中英文 gloss，預設開啟 water（第 150 詞）。
-- 地圖開關可分別顯示「語言別」與「原始語言」，同步篩選清單及詳情。預設只顯示語言別；示範模式沿用目前設定，重新整理後恢復預設。
-- 底圖以 HydroRIVERS 全長至少 40 公里的主流呈現簡易水系輪廓，保留澎湖、綠島與蘭嶼，不顯示金門及海域名稱。
-- 語群分類樹可展開；「查看此語群」包含所有子群及其重建語。
-- 清單與地圖共用選取狀態；詳情提供 orth、IPA、分類路徑與位置說明。
-- 文字與 variety 名稱小幅避讓（相對預設位置最多 48 CSS px），移位時以細線連回原座標；排不下只隱藏文字，marker 保留。
-- 正在查看的標籤優先。細線只表示文字與 marker 的對應，不表示語言親緣或遷徙。
-- 完全同座標可從完整清單逐筆查看，不修改資料座標。
-- 分享網址使用 ?concept=water，支援重新整理及上一頁／下一頁。
-- 「尚未收錄」表示這份資料尚不完整，不代表語言不存在該概念。
-
-## 檔案與資料流
-
-~~~text
-source/ → scripts/build.py → dist/
-site/   ────────────────────┘
-                             ├── index.html
-                             ├── assets/
-                             └── data/
-                                 ├── concepts.json
-                                 ├── varieties.json
-                                 ├── subgroups.json
-                                 └── words/<concept_id>.json
-~~~
-
-app.js 負責頁面與狀態，data.js 負責 JSON 載入與請求快取，map.js 負責 Leaflet、marker 與標籤。初次只下載 metadata、地理輪廓、水系和一個詞項；沒有全部詞彙預載或 service worker。失敗請求可重試，過期回應不更新目前畫面。
-
-底圖與水系在載入後一次投影成完整 SVG，以 Leaflet SVGOverlay 疊圖呈現。兩者共用 Web Mercator 座標範圍，縮放與拖曳只更新位置、尺寸，不按視野裁切或重建路徑；外層地圖容器統一遮罩，線寬保持固定。即使整個台灣暫時離開視野，完整圖形仍保留，也不會重新下載資料。詞彙標籤仍在縮放結束後重新避讓。
-
-Leaflet、Natural Earth 地理輪廓與 HydroRIVERS 水系圖層隨網站發布；不使用外部圖磚或網路字體。字體依裝置可用的 Noto Serif TC、Songti TC、Georgia 與系統字體顯示，字形可能略有差異。
+左下角 k 連按五次可載入 999 合成示範語料；切回一般詞項或重新整理即回到正式資料。
 
 ## GitHub Pages
 
-1. 免費方案使用公開 repository。若 repository 為私有，先確認 GitHub 方案是否支援；更改為公開會公開程式碼與歷史紀錄。
-2. 在 repository 的 Settings → Pages → Build and deployment，將 Source 設為 GitHub Actions。
-3. 將程式推送至 main。workflow 執行 Python 測試、建置並發布 dist/。
-4. workflow 成功後，開啟 https://rngagi.github.io/kaladaxe/ 。
+推送 main 後，GitHub Actions 執行測試、建置並發布 dist/。PR 事件執行測試與建置。
 
-workflow 的 PR 事件只測試與建置，不部署。部署使用 github-pages environment，權限僅為 contents: read、pages: write、id-token: write。若變更預設分支名稱，同步更新 workflow 的 push.branches。
-
-所有本地資源使用相對路徑，JSON 以模組位置為基準，不依賴 repository 名稱。部署失敗不替換既有 Pages 站點。
-
-水系使用 HydroRIVERS v1.0 的 ORD_CLAS 1，只保留各流域全長至少 40 公里的主流，無河名或河床面積。長度使用該主流全部河段的 LENGTH_KM 加總，整條保留或移除，不依單段長度截斷。線網解析度約 500 公尺，適合台灣概覽；小溪與離島水系可能未收錄，放大後也不增加精度。
-
-更換水系來源時才需執行 scripts/prepare_rivers.py，該一次性工具需要 pyshp 與 Shapely；例：python3 scripts/prepare_rivers.py /path/to/HydroRIVERS_v10_as.shp。例行建置仍只需 Python 標準函式庫，使用已整理的本地 GeoJSON。工具依島嶼輪廓選擇流域、保留全長至少 40 公里的主流、合併相接河段並取小數五位，不做額外折線簡化或裁斷河口。
-
-底圖與水系均為 WGS84 經緯度，由同一 Leaflet 地圖以 EPSG:3857 投影顯示。Natural Earth 的概化海岸與 HydroRIVERS 河口存在局部位置差異；沒有額外平移或以海岸裁切河流來強迫對齊。
-
-來源、授權與地理資料處理方式見 THIRD_PARTY_NOTICES.md。
+在 repository 的 Settings → Pages 將 Source 設為 GitHub Actions。網站：[rngagi.github.io/kaladaxe](https://rngagi.github.io/kaladaxe/)。
