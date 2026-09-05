@@ -1,12 +1,8 @@
 {
   "source": {
-    "title": "Wikipedia — Swadesh 207 list",
-    "url": "https://en.wikipedia.org/wiki/Swadesh_list#Swadesh_207_list",
-    "version": "Wikipedia revision 1367756650",
-    "revision_url": "https://en.wikipedia.org/w/index.php?title=Swadesh_list&oldid=1367756650#Swadesh_207_list",
-    "retrieved_at": "2026-09-04",
-    "translation_note": "繁體中文 gloss 由 kaladaxe 整理，保留英文詞目的語義區別，供人工校訂。",
-    "license": "English Wikipedia text: CC BY-SA 4.0; basic concept labels are factual data."
+    "title": "kaladaxe 基礎詞彙200+",
+    "version": "2026-09-05",
+    "description": "自訂基礎詞彙，共 214 個概念；數詞置於末尾。"
   },
   "items": [
     {
@@ -136,1120 +132,1162 @@
       "gloss_zh": "其他"
     },
     {
-      "id": "one",
-      "swadesh_number": 22,
-      "gloss_en": "one",
-      "gloss_zh": "一"
-    },
-    {
-      "id": "two",
-      "swadesh_number": 23,
-      "gloss_en": "two",
-      "gloss_zh": "二"
-    },
-    {
-      "id": "three",
-      "swadesh_number": 24,
-      "gloss_en": "three",
-      "gloss_zh": "三"
-    },
-    {
-      "id": "four",
-      "swadesh_number": 25,
-      "gloss_en": "four",
-      "gloss_zh": "四"
-    },
-    {
-      "id": "five",
-      "swadesh_number": 26,
-      "gloss_en": "five",
-      "gloss_zh": "五"
-    },
-    {
       "id": "big",
-      "swadesh_number": 27,
+      "swadesh_number": 22,
       "gloss_en": "big",
       "gloss_zh": "大"
     },
     {
       "id": "long",
-      "swadesh_number": 28,
+      "swadesh_number": 23,
       "gloss_en": "long",
       "gloss_zh": "長"
     },
     {
       "id": "wide",
-      "swadesh_number": 29,
+      "swadesh_number": 24,
       "gloss_en": "wide",
       "gloss_zh": "寬"
     },
     {
       "id": "thick",
-      "swadesh_number": 30,
+      "swadesh_number": 25,
       "gloss_en": "thick",
       "gloss_zh": "厚"
     },
     {
       "id": "heavy",
-      "swadesh_number": 31,
+      "swadesh_number": 26,
       "gloss_en": "heavy",
       "gloss_zh": "重"
     },
     {
       "id": "small",
-      "swadesh_number": 32,
+      "swadesh_number": 27,
       "gloss_en": "small",
       "gloss_zh": "小"
     },
     {
       "id": "short",
-      "swadesh_number": 33,
+      "swadesh_number": 28,
       "gloss_en": "short",
       "gloss_zh": "短"
     },
     {
       "id": "narrow",
-      "swadesh_number": 34,
+      "swadesh_number": 29,
       "gloss_en": "narrow",
       "gloss_zh": "窄"
     },
     {
       "id": "thin",
-      "swadesh_number": 35,
+      "swadesh_number": 30,
       "gloss_en": "thin",
       "gloss_zh": "薄"
     },
     {
       "id": "woman",
-      "swadesh_number": 36,
+      "swadesh_number": 31,
       "gloss_en": "woman",
       "gloss_zh": "女人"
     },
     {
       "id": "man",
-      "swadesh_number": 37,
+      "swadesh_number": 32,
       "gloss_en": "man (adult male)",
       "gloss_zh": "男人（成年男性）"
     },
     {
       "id": "person",
-      "swadesh_number": 38,
+      "swadesh_number": 33,
       "gloss_en": "man (human being)",
       "gloss_zh": "人（人類）"
     },
     {
       "id": "child",
-      "swadesh_number": 39,
+      "swadesh_number": 34,
       "gloss_en": "child",
       "gloss_zh": "小孩"
     },
     {
       "id": "wife",
-      "swadesh_number": 40,
+      "swadesh_number": 35,
       "gloss_en": "wife",
       "gloss_zh": "妻子"
     },
     {
       "id": "husband",
-      "swadesh_number": 41,
+      "swadesh_number": 36,
       "gloss_en": "husband",
       "gloss_zh": "丈夫"
     },
     {
       "id": "mother",
-      "swadesh_number": 42,
+      "swadesh_number": 37,
       "gloss_en": "mother",
       "gloss_zh": "母親"
     },
     {
       "id": "father",
-      "swadesh_number": 43,
+      "swadesh_number": 38,
       "gloss_en": "father",
       "gloss_zh": "父親"
     },
     {
       "id": "animal",
-      "swadesh_number": 44,
+      "swadesh_number": 39,
       "gloss_en": "animal",
       "gloss_zh": "動物"
     },
     {
       "id": "fish",
-      "swadesh_number": 45,
+      "swadesh_number": 40,
       "gloss_en": "fish",
       "gloss_zh": "魚"
     },
     {
       "id": "bird",
-      "swadesh_number": 46,
+      "swadesh_number": 41,
       "gloss_en": "bird",
       "gloss_zh": "鳥"
     },
     {
       "id": "dog",
-      "swadesh_number": 47,
+      "swadesh_number": 42,
       "gloss_en": "dog",
       "gloss_zh": "狗"
     },
     {
       "id": "louse",
-      "swadesh_number": 48,
+      "swadesh_number": 43,
       "gloss_en": "louse",
       "gloss_zh": "蝨子"
     },
     {
       "id": "snake",
-      "swadesh_number": 49,
+      "swadesh_number": 44,
       "gloss_en": "snake",
       "gloss_zh": "蛇"
     },
     {
       "id": "worm",
-      "swadesh_number": 50,
+      "swadesh_number": 45,
       "gloss_en": "worm",
       "gloss_zh": "蠕蟲"
     },
     {
       "id": "tree",
-      "swadesh_number": 51,
+      "swadesh_number": 46,
       "gloss_en": "tree",
       "gloss_zh": "樹"
     },
     {
       "id": "forest",
-      "swadesh_number": 52,
+      "swadesh_number": 47,
       "gloss_en": "forest",
       "gloss_zh": "森林"
     },
     {
       "id": "stick",
-      "swadesh_number": 53,
+      "swadesh_number": 48,
       "gloss_en": "stick",
       "gloss_zh": "棍子"
     },
     {
       "id": "fruit",
-      "swadesh_number": 54,
+      "swadesh_number": 49,
       "gloss_en": "fruit",
       "gloss_zh": "果實"
     },
     {
       "id": "seed",
-      "swadesh_number": 55,
+      "swadesh_number": 50,
       "gloss_en": "seed",
       "gloss_zh": "種子"
     },
     {
       "id": "leaf",
-      "swadesh_number": 56,
+      "swadesh_number": 51,
       "gloss_en": "leaf",
       "gloss_zh": "葉子"
     },
     {
       "id": "root",
-      "swadesh_number": 57,
+      "swadesh_number": 52,
       "gloss_en": "root",
       "gloss_zh": "根"
     },
     {
       "id": "bark",
-      "swadesh_number": 58,
+      "swadesh_number": 53,
       "gloss_en": "bark (of a tree)",
       "gloss_zh": "樹皮"
     },
     {
       "id": "flower",
-      "swadesh_number": 59,
+      "swadesh_number": 54,
       "gloss_en": "flower",
       "gloss_zh": "花"
     },
     {
       "id": "grass",
-      "swadesh_number": 60,
+      "swadesh_number": 55,
       "gloss_en": "grass",
       "gloss_zh": "草"
     },
     {
       "id": "rope",
-      "swadesh_number": 61,
+      "swadesh_number": 56,
       "gloss_en": "rope",
       "gloss_zh": "繩子"
     },
     {
       "id": "skin",
-      "swadesh_number": 62,
+      "swadesh_number": 57,
       "gloss_en": "skin",
       "gloss_zh": "皮膚"
     },
     {
       "id": "meat",
-      "swadesh_number": 63,
+      "swadesh_number": 58,
       "gloss_en": "meat",
       "gloss_zh": "肉"
     },
     {
       "id": "blood",
-      "swadesh_number": 64,
+      "swadesh_number": 59,
       "gloss_en": "blood",
       "gloss_zh": "血"
     },
     {
       "id": "bone",
-      "swadesh_number": 65,
+      "swadesh_number": 60,
       "gloss_en": "bone",
       "gloss_zh": "骨頭"
     },
     {
       "id": "fat",
-      "swadesh_number": 66,
+      "swadesh_number": 61,
       "gloss_en": "fat (noun)",
       "gloss_zh": "脂肪（名詞）"
     },
     {
       "id": "egg",
-      "swadesh_number": 67,
+      "swadesh_number": 62,
       "gloss_en": "egg",
       "gloss_zh": "蛋"
     },
     {
       "id": "horn",
-      "swadesh_number": 68,
+      "swadesh_number": 63,
       "gloss_en": "horn",
       "gloss_zh": "角"
     },
     {
       "id": "tail",
-      "swadesh_number": 69,
+      "swadesh_number": 64,
       "gloss_en": "tail",
       "gloss_zh": "尾巴"
     },
     {
       "id": "feather",
-      "swadesh_number": 70,
+      "swadesh_number": 65,
       "gloss_en": "feather",
       "gloss_zh": "羽毛"
     },
     {
       "id": "hair",
-      "swadesh_number": 71,
+      "swadesh_number": 66,
       "gloss_en": "hair",
       "gloss_zh": "毛髮"
     },
     {
       "id": "head",
-      "swadesh_number": 72,
+      "swadesh_number": 67,
       "gloss_en": "head",
       "gloss_zh": "頭"
     },
     {
       "id": "ear",
-      "swadesh_number": 73,
+      "swadesh_number": 68,
       "gloss_en": "ear",
       "gloss_zh": "耳朵"
     },
     {
       "id": "eye",
-      "swadesh_number": 74,
+      "swadesh_number": 69,
       "gloss_en": "eye",
       "gloss_zh": "眼睛"
     },
     {
       "id": "nose",
-      "swadesh_number": 75,
+      "swadesh_number": 70,
       "gloss_en": "nose",
       "gloss_zh": "鼻子"
     },
     {
       "id": "mouth",
-      "swadesh_number": 76,
+      "swadesh_number": 71,
       "gloss_en": "mouth",
       "gloss_zh": "嘴"
     },
     {
       "id": "tooth",
-      "swadesh_number": 77,
+      "swadesh_number": 72,
       "gloss_en": "tooth",
       "gloss_zh": "牙齒"
     },
     {
       "id": "tongue",
-      "swadesh_number": 78,
+      "swadesh_number": 73,
       "gloss_en": "tongue (organ)",
       "gloss_zh": "舌頭（器官）"
     },
     {
       "id": "fingernail",
-      "swadesh_number": 79,
+      "swadesh_number": 74,
       "gloss_en": "fingernail",
       "gloss_zh": "手指甲"
     },
     {
       "id": "foot",
-      "swadesh_number": 80,
+      "swadesh_number": 75,
       "gloss_en": "foot",
       "gloss_zh": "腳"
     },
     {
       "id": "leg",
-      "swadesh_number": 81,
+      "swadesh_number": 76,
       "gloss_en": "leg",
       "gloss_zh": "腿"
     },
     {
       "id": "knee",
-      "swadesh_number": 82,
+      "swadesh_number": 77,
       "gloss_en": "knee",
       "gloss_zh": "膝蓋"
     },
     {
       "id": "hand",
-      "swadesh_number": 83,
+      "swadesh_number": 78,
       "gloss_en": "hand",
       "gloss_zh": "手"
     },
     {
       "id": "wing",
-      "swadesh_number": 84,
+      "swadesh_number": 79,
       "gloss_en": "wing",
       "gloss_zh": "翅膀"
     },
     {
       "id": "belly",
-      "swadesh_number": 85,
+      "swadesh_number": 80,
       "gloss_en": "belly",
       "gloss_zh": "肚子"
     },
     {
       "id": "guts",
-      "swadesh_number": 86,
+      "swadesh_number": 81,
       "gloss_en": "guts",
       "gloss_zh": "腸子"
     },
     {
       "id": "neck",
-      "swadesh_number": 87,
+      "swadesh_number": 82,
       "gloss_en": "neck",
       "gloss_zh": "脖子"
     },
     {
       "id": "back",
-      "swadesh_number": 88,
+      "swadesh_number": 83,
       "gloss_en": "back",
       "gloss_zh": "背部"
     },
     {
       "id": "breast",
-      "swadesh_number": 89,
+      "swadesh_number": 84,
       "gloss_en": "breast",
       "gloss_zh": "乳房"
     },
     {
       "id": "heart",
-      "swadesh_number": 90,
+      "swadesh_number": 85,
       "gloss_en": "heart",
       "gloss_zh": "心臟"
     },
     {
       "id": "liver",
-      "swadesh_number": 91,
+      "swadesh_number": 86,
       "gloss_en": "liver",
       "gloss_zh": "肝臟"
     },
     {
       "id": "drink",
-      "swadesh_number": 92,
+      "swadesh_number": 87,
       "gloss_en": "to drink",
       "gloss_zh": "喝"
     },
     {
       "id": "eat",
-      "swadesh_number": 93,
+      "swadesh_number": 88,
       "gloss_en": "to eat",
       "gloss_zh": "吃"
     },
     {
       "id": "bite",
-      "swadesh_number": 94,
+      "swadesh_number": 89,
       "gloss_en": "to bite",
       "gloss_zh": "咬"
     },
     {
       "id": "suck",
-      "swadesh_number": 95,
+      "swadesh_number": 90,
       "gloss_en": "to suck",
       "gloss_zh": "吸吮"
     },
     {
       "id": "spit",
-      "swadesh_number": 96,
+      "swadesh_number": 91,
       "gloss_en": "to spit",
       "gloss_zh": "吐唾液"
     },
     {
       "id": "vomit",
-      "swadesh_number": 97,
+      "swadesh_number": 92,
       "gloss_en": "to vomit",
       "gloss_zh": "嘔吐"
     },
     {
       "id": "blow",
-      "swadesh_number": 98,
+      "swadesh_number": 93,
       "gloss_en": "to blow",
       "gloss_zh": "吹"
     },
     {
       "id": "breathe",
-      "swadesh_number": 99,
+      "swadesh_number": 94,
       "gloss_en": "to breathe",
       "gloss_zh": "呼吸"
     },
     {
       "id": "laugh",
-      "swadesh_number": 100,
+      "swadesh_number": 95,
       "gloss_en": "to laugh",
       "gloss_zh": "笑"
     },
     {
       "id": "see",
-      "swadesh_number": 101,
+      "swadesh_number": 96,
       "gloss_en": "to see",
       "gloss_zh": "看見"
     },
     {
       "id": "hear",
-      "swadesh_number": 102,
+      "swadesh_number": 97,
       "gloss_en": "to hear",
       "gloss_zh": "聽見"
     },
     {
       "id": "know",
-      "swadesh_number": 103,
+      "swadesh_number": 98,
       "gloss_en": "to know",
       "gloss_zh": "知道"
     },
     {
       "id": "think",
-      "swadesh_number": 104,
+      "swadesh_number": 99,
       "gloss_en": "to think",
       "gloss_zh": "想"
     },
     {
       "id": "smell",
-      "swadesh_number": 105,
+      "swadesh_number": 100,
       "gloss_en": "to smell",
       "gloss_zh": "聞"
     },
     {
       "id": "fear",
-      "swadesh_number": 106,
+      "swadesh_number": 101,
       "gloss_en": "to fear",
       "gloss_zh": "害怕"
     },
     {
       "id": "sleep",
-      "swadesh_number": 107,
+      "swadesh_number": 102,
       "gloss_en": "to sleep",
       "gloss_zh": "睡覺"
     },
     {
       "id": "live",
-      "swadesh_number": 108,
+      "swadesh_number": 103,
       "gloss_en": "to live",
       "gloss_zh": "活著"
     },
     {
       "id": "die",
-      "swadesh_number": 109,
+      "swadesh_number": 104,
       "gloss_en": "to die",
       "gloss_zh": "死"
     },
     {
       "id": "kill",
-      "swadesh_number": 110,
+      "swadesh_number": 105,
       "gloss_en": "to kill",
       "gloss_zh": "殺"
     },
     {
       "id": "fight",
-      "swadesh_number": 111,
+      "swadesh_number": 106,
       "gloss_en": "to fight",
       "gloss_zh": "打鬥"
     },
     {
       "id": "hunt",
-      "swadesh_number": 112,
+      "swadesh_number": 107,
       "gloss_en": "to hunt",
       "gloss_zh": "打獵"
     },
     {
       "id": "hit",
-      "swadesh_number": 113,
+      "swadesh_number": 108,
       "gloss_en": "to hit",
       "gloss_zh": "打"
     },
     {
       "id": "cut",
-      "swadesh_number": 114,
+      "swadesh_number": 109,
       "gloss_en": "to cut",
       "gloss_zh": "切"
     },
     {
       "id": "split",
-      "swadesh_number": 115,
+      "swadesh_number": 110,
       "gloss_en": "to split",
       "gloss_zh": "劈開"
     },
     {
       "id": "stab",
-      "swadesh_number": 116,
+      "swadesh_number": 111,
       "gloss_en": "to stab",
       "gloss_zh": "刺"
     },
     {
       "id": "scratch",
-      "swadesh_number": 117,
+      "swadesh_number": 112,
       "gloss_en": "to scratch",
       "gloss_zh": "抓搔"
     },
     {
       "id": "dig",
-      "swadesh_number": 118,
+      "swadesh_number": 113,
       "gloss_en": "to dig",
       "gloss_zh": "挖"
     },
     {
       "id": "swim",
-      "swadesh_number": 119,
+      "swadesh_number": 114,
       "gloss_en": "to swim",
       "gloss_zh": "游泳"
     },
     {
       "id": "fly",
-      "swadesh_number": 120,
+      "swadesh_number": 115,
       "gloss_en": "to fly",
       "gloss_zh": "飛"
     },
     {
       "id": "walk",
-      "swadesh_number": 121,
+      "swadesh_number": 116,
       "gloss_en": "to walk",
       "gloss_zh": "走"
     },
     {
       "id": "come",
-      "swadesh_number": 122,
+      "swadesh_number": 117,
       "gloss_en": "to come",
       "gloss_zh": "來"
     },
     {
       "id": "lie",
-      "swadesh_number": 123,
+      "swadesh_number": 118,
       "gloss_en": "to lie (as in a bed)",
       "gloss_zh": "躺（如躺在床上）"
     },
     {
       "id": "sit",
-      "swadesh_number": 124,
+      "swadesh_number": 119,
       "gloss_en": "to sit",
       "gloss_zh": "坐"
     },
     {
       "id": "stand",
-      "swadesh_number": 125,
+      "swadesh_number": 120,
       "gloss_en": "to stand",
       "gloss_zh": "站"
     },
     {
       "id": "turn",
-      "swadesh_number": 126,
+      "swadesh_number": 121,
       "gloss_en": "to turn (intransitive)",
       "gloss_zh": "轉身（不及物）"
     },
     {
       "id": "fall",
-      "swadesh_number": 127,
+      "swadesh_number": 122,
       "gloss_en": "to fall",
       "gloss_zh": "落下"
     },
     {
       "id": "give",
-      "swadesh_number": 128,
+      "swadesh_number": 123,
       "gloss_en": "to give",
       "gloss_zh": "給"
     },
     {
       "id": "hold",
-      "swadesh_number": 129,
+      "swadesh_number": 124,
       "gloss_en": "to hold",
       "gloss_zh": "拿著"
     },
     {
       "id": "squeeze",
-      "swadesh_number": 130,
+      "swadesh_number": 125,
       "gloss_en": "to squeeze",
       "gloss_zh": "擠壓"
     },
     {
       "id": "rub",
-      "swadesh_number": 131,
+      "swadesh_number": 126,
       "gloss_en": "to rub",
       "gloss_zh": "摩擦"
     },
     {
       "id": "wash",
-      "swadesh_number": 132,
+      "swadesh_number": 127,
       "gloss_en": "to wash",
       "gloss_zh": "洗"
     },
     {
       "id": "wipe",
-      "swadesh_number": 133,
+      "swadesh_number": 128,
       "gloss_en": "to wipe",
       "gloss_zh": "擦拭"
     },
     {
       "id": "pull",
-      "swadesh_number": 134,
+      "swadesh_number": 129,
       "gloss_en": "to pull",
       "gloss_zh": "拉"
     },
     {
       "id": "push",
-      "swadesh_number": 135,
+      "swadesh_number": 130,
       "gloss_en": "to push",
       "gloss_zh": "推"
     },
     {
       "id": "throw",
-      "swadesh_number": 136,
+      "swadesh_number": 131,
       "gloss_en": "to throw",
       "gloss_zh": "丟"
     },
     {
       "id": "tie",
-      "swadesh_number": 137,
+      "swadesh_number": 132,
       "gloss_en": "to tie",
       "gloss_zh": "綁"
     },
     {
       "id": "sew",
-      "swadesh_number": 138,
+      "swadesh_number": 133,
       "gloss_en": "to sew",
       "gloss_zh": "縫"
     },
     {
       "id": "count",
-      "swadesh_number": 139,
+      "swadesh_number": 134,
       "gloss_en": "to count",
       "gloss_zh": "數"
     },
     {
       "id": "say",
-      "swadesh_number": 140,
+      "swadesh_number": 135,
       "gloss_en": "to say",
       "gloss_zh": "說"
     },
     {
       "id": "sing",
-      "swadesh_number": 141,
+      "swadesh_number": 136,
       "gloss_en": "to sing",
       "gloss_zh": "唱歌"
     },
     {
       "id": "play",
-      "swadesh_number": 142,
+      "swadesh_number": 137,
       "gloss_en": "to play",
       "gloss_zh": "玩"
     },
     {
       "id": "float",
-      "swadesh_number": 143,
+      "swadesh_number": 138,
       "gloss_en": "to float",
       "gloss_zh": "漂浮"
     },
     {
       "id": "flow",
-      "swadesh_number": 144,
+      "swadesh_number": 139,
       "gloss_en": "to flow",
       "gloss_zh": "流動"
     },
     {
       "id": "freeze",
-      "swadesh_number": 145,
+      "swadesh_number": 140,
       "gloss_en": "to freeze",
       "gloss_zh": "結冰"
     },
     {
       "id": "swell",
-      "swadesh_number": 146,
+      "swadesh_number": 141,
       "gloss_en": "to swell",
       "gloss_zh": "腫脹"
     },
     {
       "id": "sun",
-      "swadesh_number": 147,
+      "swadesh_number": 142,
       "gloss_en": "sun",
       "gloss_zh": "太陽"
     },
     {
       "id": "moon",
-      "swadesh_number": 148,
+      "swadesh_number": 143,
       "gloss_en": "moon",
       "gloss_zh": "月亮"
     },
     {
       "id": "star",
-      "swadesh_number": 149,
+      "swadesh_number": 144,
       "gloss_en": "star",
       "gloss_zh": "星星"
     },
     {
       "id": "water",
-      "swadesh_number": 150,
+      "swadesh_number": 145,
       "gloss_en": "water",
       "gloss_zh": "水"
     },
     {
       "id": "rain",
-      "swadesh_number": 151,
+      "swadesh_number": 146,
       "gloss_en": "rain",
       "gloss_zh": "雨"
     },
     {
       "id": "river",
-      "swadesh_number": 152,
+      "swadesh_number": 147,
       "gloss_en": "river",
       "gloss_zh": "河"
     },
     {
       "id": "lake",
-      "swadesh_number": 153,
+      "swadesh_number": 148,
       "gloss_en": "lake",
       "gloss_zh": "湖"
     },
     {
       "id": "sea",
-      "swadesh_number": 154,
+      "swadesh_number": 149,
       "gloss_en": "sea",
       "gloss_zh": "海"
     },
     {
       "id": "salt",
-      "swadesh_number": 155,
+      "swadesh_number": 150,
       "gloss_en": "salt",
       "gloss_zh": "鹽"
     },
     {
       "id": "stone",
-      "swadesh_number": 156,
+      "swadesh_number": 151,
       "gloss_en": "stone",
       "gloss_zh": "石頭"
     },
     {
       "id": "sand",
-      "swadesh_number": 157,
+      "swadesh_number": 152,
       "gloss_en": "sand",
       "gloss_zh": "沙"
     },
     {
       "id": "dust",
-      "swadesh_number": 158,
+      "swadesh_number": 153,
       "gloss_en": "dust",
       "gloss_zh": "灰塵"
     },
     {
       "id": "earth",
-      "swadesh_number": 159,
+      "swadesh_number": 154,
       "gloss_en": "earth",
       "gloss_zh": "土"
     },
     {
       "id": "cloud",
-      "swadesh_number": 160,
+      "swadesh_number": 155,
       "gloss_en": "cloud",
       "gloss_zh": "雲"
     },
     {
       "id": "fog",
-      "swadesh_number": 161,
+      "swadesh_number": 156,
       "gloss_en": "fog",
       "gloss_zh": "霧"
     },
     {
       "id": "sky",
-      "swadesh_number": 162,
+      "swadesh_number": 157,
       "gloss_en": "sky",
       "gloss_zh": "天空"
     },
     {
       "id": "wind",
-      "swadesh_number": 163,
+      "swadesh_number": 158,
       "gloss_en": "wind",
       "gloss_zh": "風"
     },
     {
       "id": "snow",
-      "swadesh_number": 164,
+      "swadesh_number": 159,
       "gloss_en": "snow",
       "gloss_zh": "雪"
     },
     {
       "id": "ice",
-      "swadesh_number": 165,
+      "swadesh_number": 160,
       "gloss_en": "ice",
       "gloss_zh": "冰"
     },
     {
       "id": "smoke",
-      "swadesh_number": 166,
+      "swadesh_number": 161,
       "gloss_en": "smoke",
       "gloss_zh": "煙"
     },
     {
       "id": "fire",
-      "swadesh_number": 167,
+      "swadesh_number": 162,
       "gloss_en": "fire",
       "gloss_zh": "火"
     },
     {
       "id": "ash",
-      "swadesh_number": 168,
+      "swadesh_number": 163,
       "gloss_en": "ash",
       "gloss_zh": "灰燼"
     },
     {
       "id": "burn",
-      "swadesh_number": 169,
+      "swadesh_number": 164,
       "gloss_en": "to burn",
       "gloss_zh": "燃燒"
     },
     {
       "id": "road",
-      "swadesh_number": 170,
+      "swadesh_number": 165,
       "gloss_en": "road",
       "gloss_zh": "路"
     },
     {
       "id": "mountain",
-      "swadesh_number": 171,
+      "swadesh_number": 166,
       "gloss_en": "mountain",
       "gloss_zh": "山"
     },
     {
       "id": "red",
-      "swadesh_number": 172,
+      "swadesh_number": 167,
       "gloss_en": "red",
       "gloss_zh": "紅"
     },
     {
       "id": "green",
-      "swadesh_number": 173,
+      "swadesh_number": 168,
       "gloss_en": "green",
       "gloss_zh": "綠"
     },
     {
       "id": "yellow",
-      "swadesh_number": 174,
+      "swadesh_number": 169,
       "gloss_en": "yellow",
       "gloss_zh": "黃"
     },
     {
       "id": "white",
-      "swadesh_number": 175,
+      "swadesh_number": 170,
       "gloss_en": "white",
       "gloss_zh": "白"
     },
     {
       "id": "black",
-      "swadesh_number": 176,
+      "swadesh_number": 171,
       "gloss_en": "black",
       "gloss_zh": "黑"
     },
     {
       "id": "night",
-      "swadesh_number": 177,
+      "swadesh_number": 172,
       "gloss_en": "night",
       "gloss_zh": "夜晚"
     },
     {
       "id": "day",
-      "swadesh_number": 178,
+      "swadesh_number": 173,
       "gloss_en": "day",
       "gloss_zh": "白天"
     },
     {
       "id": "year",
-      "swadesh_number": 179,
+      "swadesh_number": 174,
       "gloss_en": "year",
       "gloss_zh": "年"
     },
     {
       "id": "warm",
-      "swadesh_number": 180,
+      "swadesh_number": 175,
       "gloss_en": "warm",
       "gloss_zh": "溫暖"
     },
     {
       "id": "cold",
-      "swadesh_number": 181,
+      "swadesh_number": 176,
       "gloss_en": "cold",
       "gloss_zh": "冷"
     },
     {
       "id": "full",
-      "swadesh_number": 182,
+      "swadesh_number": 177,
       "gloss_en": "full",
       "gloss_zh": "滿"
     },
     {
       "id": "new",
-      "swadesh_number": 183,
+      "swadesh_number": 178,
       "gloss_en": "new",
       "gloss_zh": "新"
     },
     {
       "id": "old",
-      "swadesh_number": 184,
+      "swadesh_number": 179,
       "gloss_en": "old",
       "gloss_zh": "舊"
     },
     {
       "id": "good",
-      "swadesh_number": 185,
+      "swadesh_number": 180,
       "gloss_en": "good",
       "gloss_zh": "好"
     },
     {
       "id": "bad",
-      "swadesh_number": 186,
+      "swadesh_number": 181,
       "gloss_en": "bad",
       "gloss_zh": "壞"
     },
     {
       "id": "rotten",
-      "swadesh_number": 187,
+      "swadesh_number": 182,
       "gloss_en": "rotten",
       "gloss_zh": "腐爛"
     },
     {
       "id": "dirty",
-      "swadesh_number": 188,
+      "swadesh_number": 183,
       "gloss_en": "dirty",
       "gloss_zh": "髒"
     },
     {
       "id": "straight",
-      "swadesh_number": 189,
+      "swadesh_number": 184,
       "gloss_en": "straight",
       "gloss_zh": "直"
     },
     {
       "id": "round",
-      "swadesh_number": 190,
+      "swadesh_number": 185,
       "gloss_en": "round",
       "gloss_zh": "圓"
     },
     {
       "id": "sharp",
-      "swadesh_number": 191,
+      "swadesh_number": 186,
       "gloss_en": "sharp (as a knife)",
       "gloss_zh": "鋒利（如刀刃）"
     },
     {
       "id": "dull",
-      "swadesh_number": 192,
+      "swadesh_number": 187,
       "gloss_en": "dull (as a knife)",
       "gloss_zh": "鈍（如刀刃）"
     },
     {
       "id": "smooth",
-      "swadesh_number": 193,
+      "swadesh_number": 188,
       "gloss_en": "smooth",
       "gloss_zh": "光滑"
     },
     {
       "id": "wet",
-      "swadesh_number": 194,
+      "swadesh_number": 189,
       "gloss_en": "wet",
       "gloss_zh": "濕"
     },
     {
       "id": "dry",
-      "swadesh_number": 195,
+      "swadesh_number": 190,
       "gloss_en": "dry",
       "gloss_zh": "乾"
     },
     {
       "id": "correct",
-      "swadesh_number": 196,
+      "swadesh_number": 191,
       "gloss_en": "correct",
       "gloss_zh": "正確"
     },
     {
       "id": "near",
-      "swadesh_number": 197,
+      "swadesh_number": 192,
       "gloss_en": "near",
       "gloss_zh": "近"
     },
     {
       "id": "far",
-      "swadesh_number": 198,
+      "swadesh_number": 193,
       "gloss_en": "far",
       "gloss_zh": "遠"
     },
     {
       "id": "right",
-      "swadesh_number": 199,
+      "swadesh_number": 194,
       "gloss_en": "right",
       "gloss_zh": "右"
     },
     {
       "id": "left",
-      "swadesh_number": 200,
+      "swadesh_number": 195,
       "gloss_en": "left",
       "gloss_zh": "左"
     },
     {
       "id": "at",
-      "swadesh_number": 201,
+      "swadesh_number": 196,
       "gloss_en": "at",
       "gloss_zh": "在（某處）"
     },
     {
       "id": "in",
-      "swadesh_number": 202,
+      "swadesh_number": 197,
       "gloss_en": "in",
       "gloss_zh": "在……裡面"
     },
     {
       "id": "with",
-      "swadesh_number": 203,
+      "swadesh_number": 198,
       "gloss_en": "with",
       "gloss_zh": "與……一起"
     },
     {
       "id": "and",
-      "swadesh_number": 204,
+      "swadesh_number": 199,
       "gloss_en": "and",
       "gloss_zh": "和"
     },
     {
       "id": "if",
-      "swadesh_number": 205,
+      "swadesh_number": 200,
       "gloss_en": "if",
       "gloss_zh": "如果"
     },
     {
       "id": "because",
-      "swadesh_number": 206,
+      "swadesh_number": 201,
       "gloss_en": "because",
       "gloss_zh": "因為"
     },
     {
       "id": "name",
-      "swadesh_number": 207,
+      "swadesh_number": 202,
       "gloss_en": "name",
       "gloss_zh": "名字"
+    },
+    {
+      "id": "one",
+      "swadesh_number": 203,
+      "gloss_en": "one",
+      "gloss_zh": "一"
+    },
+    {
+      "id": "two",
+      "swadesh_number": 204,
+      "gloss_en": "two",
+      "gloss_zh": "二"
+    },
+    {
+      "id": "three",
+      "swadesh_number": 205,
+      "gloss_en": "three",
+      "gloss_zh": "三"
+    },
+    {
+      "id": "four",
+      "swadesh_number": 206,
+      "gloss_en": "four",
+      "gloss_zh": "四"
+    },
+    {
+      "id": "five",
+      "swadesh_number": 207,
+      "gloss_en": "five",
+      "gloss_zh": "五"
+    },
+    {
+      "id": "six",
+      "gloss_en": "six",
+      "gloss_zh": "六",
+      "swadesh_number": 208
+    },
+    {
+      "id": "seven",
+      "gloss_en": "seven",
+      "gloss_zh": "七",
+      "swadesh_number": 209
+    },
+    {
+      "id": "eight",
+      "gloss_en": "eight",
+      "gloss_zh": "八",
+      "swadesh_number": 210
+    },
+    {
+      "id": "nine",
+      "gloss_en": "nine",
+      "gloss_zh": "九",
+      "swadesh_number": 211
+    },
+    {
+      "id": "ten",
+      "gloss_en": "ten",
+      "gloss_zh": "十",
+      "swadesh_number": 212
+    },
+    {
+      "id": "twenty",
+      "gloss_en": "twenty",
+      "gloss_zh": "二十",
+      "swadesh_number": 213
+    },
+    {
+      "id": "hundred",
+      "gloss_en": "hundred",
+      "gloss_zh": "一百",
+      "swadesh_number": 214
     }
   ]
 }

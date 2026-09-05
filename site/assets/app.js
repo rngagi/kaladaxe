@@ -94,6 +94,8 @@ function showDetail(id, reveal = false) {
   $("detail-native").hidden = !variety.native_name;
   $("detail-orth").textContent = form.orth;
   $("detail-ipa").textContent = form.ipa;
+  $("detail-ipa").hidden = !form.ipa?.trim();
+  $("detail-ipa-label").hidden = !form.ipa?.trim();
   $("detail-note").textContent = form.note;
   $("detail-note").hidden = !form.note;
   $("detail-id").textContent = id;
@@ -101,7 +103,7 @@ function showDetail(id, reveal = false) {
   metadata.replaceChildren();
   const fields = [
     ["語群分類", pathOf(variety)],
-    [variety.type === "proto" ? "地圖展示位置（非祖居地推定）" : "地圖座標",
+    [variety.type === "proto" ? "地圖位置" : "地圖座標",
       Math.abs(variety.latitude).toFixed(4) + (variety.latitude < 0 ? "° S / " : "° N / ") + Math.abs(variety.longitude).toFixed(4) + (variety.longitude < 0 ? "° W" : "° E")],
     ["位置說明", variety.location_note],
     ["ISO 639-3", variety.iso639_3],
@@ -204,11 +206,11 @@ function renderConcepts() {
 
 function syncConcept() {
   const concept = conceptIndex.get(currentId);
-  $("current-series").textContent = demoActive ? "DEMO" : "SWADESH";
+  $("current-series").textContent = demoActive ? "DEMO" : "基礎詞彙200+";
   $("current-number").textContent = concept?.swadesh_number || "—";
   $("current-zh").textContent = concept?.gloss_zh || "探索詞彙";
   $("current-en").textContent = concept?.gloss_en || "";
-  document.title = (concept ? concept.gloss_zh + " · " : "") + "kaladaxe · Swadesh 207 詞彙地圖";
+  document.title = (concept ? concept.gloss_zh + " · " : "") + "kaladaxe · 基礎詞彙200+ 地圖";
   document.querySelectorAll("[data-concept-id]").forEach((button) => {
     button.setAttribute("aria-current", String(button.dataset.conceptId === currentId));
   });
@@ -239,7 +241,8 @@ function renderWord() {
     orth.dir = "auto";
     const ipa = node("span", "result-ipa", form.ipa);
     ipa.dir = "ltr";
-    button.append(name, orth, ipa);
+    button.append(name, orth);
+    if (form.ipa?.trim()) button.append(ipa);
     button.addEventListener("click", () => showDetail(variety.id, true));
     item.append(button);
     $("results").append(item);
@@ -261,7 +264,7 @@ function renderWord() {
     notice("尚未開啟語言圖層", "勾選「語言別」或「原始語言」以查看詞彙。");
   } else if (!varieties.length) {
     $("results-message").textContent = "詞彙會隨資料整理逐步加入。";
-    notice("詞彙，正待收錄", "先從左側選擇一個詞。語言與詞彙資料加入後，將在這片地圖上相遇。");
+    notice("詞彙，正待收錄", "加入語言與詞彙資料後即可查看。");
   } else if (!visible.length && varieties.some((variety) => isInGroup(variety))) {
     $("results-message").textContent = "目前顯示類別沒有資料。";
     notice("此類別沒有可顯示的資料", "試試開啟另一種顯示類別，或選擇其他語群。");
@@ -270,7 +273,7 @@ function renderWord() {
     notice("此語群尚無資料", "選擇其他語群，或回到全部語群。");
   } else if (!available.length) {
     $("results-message").textContent = "此詞項在目前語群中尚未收錄。";
-    notice("這個詞，尚待補齊", "目前語群尚無完整的書寫形式與 IPA。試試其他詞項或語群。");
+    notice("這個詞，尚待補齊", "目前語群尚未收錄這個詞。試試其他詞項或語群。");
   } else {
     $("results-message").textContent = "";
     notice("", "");

@@ -125,8 +125,7 @@ def validate(source):
                 require(variety in vi, at, f"未知 variety_id {variety}")
                 require(variety not in words[concept]["forms"], at,
                         f"重複組合 {concept} × {variety}")
-                for field in ("orth", "ipa"):
-                    require(nonblank(row[field]), at, f"{field} 不可空白")
+                require(nonblank(row["orth"]), at, "orth 不可空白")
                 words[concept]["forms"][variety] = {field: row[field] for field in ("orth", "ipa", "note")}
     except (OSError, UnicodeError, csv.Error) as error:
         line = getattr(locals().get("reader"), "line_num", 0)

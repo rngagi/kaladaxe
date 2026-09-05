@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#991b1b">
-  <meta name="description" content="在台灣地圖上探索原住民族語言、方言與原始語言的 Swadesh 207 基礎詞彙、書寫形式及 IPA。">
-  <title>kaladaxe · 台灣原住民族語言 Swadesh 207 詞彙地圖</title>
+  <meta name="description" content="在台灣地圖上探索原住民族語言、方言與原始語言的 基礎詞彙200+、書寫形式及 IPA。">
+  <title>kaladaxe · 台灣原住民族語言 基礎詞彙200+ 地圖</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./assets/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="./assets/styles.css">
@@ -17,7 +17,7 @@
   <!--BUILD_NOTICE-->
   <header class="masthead">
     <a class="brand" href="./" aria-label="kaladaxe 首頁">kaladaxe<span class="brand-dot">.</span></a>
-    <div class="brand-description"><span>臺灣原住民族語言</span><strong>Swadesh 207 詞彙地圖</strong></div>
+    <div class="brand-description"><span>臺灣原住民族語言</span><strong>基礎詞彙200+ 地圖</strong></div>
     <span class="header-note">一個詞，看見語言的風景</span>
     <button id="about-open" class="icon-button about-button" aria-label="關於這份詞彙地圖" title="關於這份詞彙地圖">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 5v15M12 5C9 3 5 3 2 4v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Z"/></svg>
@@ -25,7 +25,7 @@
   </header>
   <section class="exploration-bar" aria-label="目前詞項">
     <div class="current-concept">
-      <span class="eyebrow"><span id="current-series">SWADESH</span> <span id="current-number">150</span></span>
+      <span class="eyebrow"><span id="current-series">基礎詞彙200+</span> <span id="current-number">145</span></span>
       <h1><span id="current-zh">水</span><span id="current-en" lang="en">water</span></h1>
     </div>
     <div class="bar-context"><span class="tiny-line"></span><span id="filter-label">全部語群</span><span id="coverage">資料載入中</span></div>
@@ -33,14 +33,14 @@
   <main class="workspace">
     <aside class="sidebar" aria-label="探索詞項與語群">
       <details class="sidebar-section concept-section" open>
-        <summary><span>選擇詞項</span><span id="concept-count" class="count">207</span></summary>
+        <summary><span>選擇詞項</span><span id="concept-count" class="count">214</span></summary>
         <div class="section-content">
           <label class="search-box" for="concept-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>
             <input id="concept-search" type="search" placeholder="搜尋中文、英文或編號" autocomplete="off" aria-controls="concept-list" disabled>
-            <span class="search-hint">207 詞</span>
+            <span class="search-hint">214 詞</span>
           </label>
-          <nav id="concept-list" class="concept-list" aria-label="Swadesh 詞項"></nav>
+          <nav id="concept-list" class="concept-list" aria-label="基礎詞彙200+ 詞項"></nav>
           <p id="search-empty" class="small-empty" hidden>找不到符合的詞項，試試其他關鍵字。</p>
         </div>
       </details>
@@ -86,7 +86,7 @@
         <span id="detail-type" class="detail-badge"></span>
         <h2 id="detail-name"></h2>
         <p id="detail-native" class="native-name"></p>
-        <div class="form-box"><span class="eyebrow">書寫形式</span><p id="detail-orth" class="detail-orth" dir="auto"></p><span class="eyebrow">國際音標 IPA</span><p id="detail-ipa" class="detail-ipa" dir="ltr"></p></div>
+        <div class="form-box"><span class="eyebrow">書寫形式</span><p id="detail-orth" class="detail-orth" dir="auto"></p><span id="detail-ipa-label" class="eyebrow">國際音標 IPA</span><p id="detail-ipa" class="detail-ipa" dir="ltr"></p></div>
         <dl id="detail-metadata"></dl>
         <p id="detail-note" class="detail-note"></p>
         <div class="detail-footer"><span>VARIETY</span><code id="detail-id"></code></div>
@@ -97,11 +97,11 @@
     <button id="about-close" class="icon-button dialog-close" aria-label="關閉關於視窗">×</button>
     <span class="eyebrow">ABOUT THE ATLAS</span>
     <h2 id="about-title">一個詞，連結不同的語言。</h2>
-    <p>kaladaxe 是噶哈巫語「地圖」之意。本站呈現台灣原住民族語言、方言與原始語言的基礎詞彙，並列書寫形式與國際音標，讓語言之間的異同得以被看見。</p>
-    <p>語群與原始語言關係依人工定義的分類呈現。原始語言的座標僅供地圖展示，不代表推定祖居地；標籤細線僅連結文字與其 marker。</p>
-    <p>詞彙會逐步補齊。「尚未收錄」表示這份地圖尚無完整資料，不表示該語言不存在此概念。</p>
-    <p>概念順序與英文詞義採自 <a href="https://en.wikipedia.org/wiki/Swadesh_list#Swadesh_207_list" target="_blank" rel="noreferrer">Wikipedia Swadesh 207 list</a>，繁體中文為本專案整理。<span id="source-version"></span></p>
-    <p class="credits">水系為約 500 公尺解析度的概略線網，不包含所有小溪，亦不代表即時河道。使用條款見 <a href="./assets/hydrosheds-license.pdf" target="_blank" rel="noreferrer">HydroSHEDS 授權文件</a>。</p>
+    <p>kaladaxe 是噶哈巫語「地圖」之意。本站呈現台灣原住民族語言、方言與原始語言的基礎詞彙，呈現書寫形式與已收錄的國際音標，讓語言之間的異同得以被看見。</p>
+    <p>基礎詞彙200+ 是本站自訂詞表，含 214 個概念。<span id="source-version"></span></p>
+    <p>42 語言別語料整理自原住民族語言研究發展基金會《2026年學習詞表》；原始南島語（PAn）與原始馬來玻里尼西亞語（PMP）形式取自 <a href="https://github.com/lexibank/acd" target="_blank" rel="noreferrer">Austronesian Comparative Dictionary</a>（Blust &amp; Trussel；CLDF 版，CC BY 4.0）。PMP 缺項以 PAn 補入，詳見各詞備註。</p>
+    <p>語言別位置採代表地點的概略座標；PAn 置於台南新化，PMP 置於台東市近海。</p>
+    <p class="credits">水系呈現全長至少 40 公里的主流，依底圖海岸輪廓裁切。<a href="./assets/hydrosheds-license.pdf" target="_blank" rel="noreferrer">HydroSHEDS 授權文件</a></p>
     <p class="credits">地理輪廓：<a href="https://www.naturalearthdata.com/" target="_blank" rel="noreferrer">Natural Earth</a>（public domain）<br>水系：<a href="https://www.hydrosheds.org/products/hydrorivers" target="_blank" rel="noreferrer">HydroRIVERS v1.0</a>（主流 ≥ 40 公里）<br>地圖程式：<a href="https://leafletjs.com/" target="_blank" rel="noreferrer">Leaflet 1.9.4</a></p>
   </dialog>
   <noscript><p class="noscript-notice">這份互動地圖需要啟用 JavaScript。</p></noscript>

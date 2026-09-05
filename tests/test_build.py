@@ -25,24 +25,32 @@ class BuildTests(unittest.TestCase):
         with (self.source / "swadesh.csv").open("w", encoding=encoding, newline="") as stream:
             csv.writer(stream).writerows(rows)
 
-    def test_production_catalog_and_empty_forms(self):
+    def test_production_catalog_and_empty_template_build(self):
         concepts, varieties, groups, words = validate(ROOT / "source")
-        self.assertEqual(len(concepts["items"]), 207)
-        self.assertEqual([i["swadesh_number"] for i in concepts["items"]], list(range(1, 208)))
-        checks = {2: ("you_singular", "you (singular)"), 5: ("you_plural", "you (plural)"),
-                  37: ("man", "man (adult male)"), 38: ("person", "man (human being)"),
-                  74: ("eye", "eye"), 150: ("water", "water"),
-                  196: ("correct", "correct"), 199: ("right", "right"), 207: ("name", "name")}
-        for number, expected in checks.items():
-            item = concepts["items"][number - 1]
-            self.assertEqual((item["id"], item["gloss_en"]), expected)
+        self.assertEqual(len(concepts["items"]), 214)
+        self.assertEqual([i["swadesh_number"] for i in concepts["items"]], list(range(1, 215)))
+        self.assertEqual([i["id"] for i in concepts["items"][-12:]],
+                         "one two three four five six seven eight nine ten twenty hundred".split())
+        by_id = {c["id"]: c for c in concepts["items"]}
+        self.assertEqual(by_id["water"]["swadesh_number"], 145)
+        self.assertEqual(by_id["person"]["gloss_en"], "man (human being)")
+        self.assertNotIn("wikipedia", json.dumps(concepts["source"]).lower())
         empty = Path(self.temp.name) / "empty-editorial"
         shutil.copytree(ROOT / "templates", empty)
         write_json(empty / "concepts.json", concepts)
         build(empty, self.output)
-        self.assertEqual(len(list((self.output / "data/words").glob("*.json"))), 207)
+        self.assertEqual(len(list((self.output / "data/words").glob("*.json"))), 214)
         self.assertNotIn("合成測試資料", (self.output / "index.html").read_text())
         self.assertFalse((self.output / "tests").exists())
+
+    def test_orthography_without_ipa_builds(self):
+        rows = self.rows()
+        rows[1][3] = ""
+        self.set_rows(rows)
+        build(self.source, self.output)
+        data = json.loads((self.output / "data/words/water.json").read_text())
+        self.assertEqual(data["forms"][rows[1][1]]["ipa"], "")
+        self.assertEqual(data["forms"][rows[1][1]]["orth"], rows[1][2])
 
     def test_empty_templates_are_valid(self):
         concepts, varieties, groups, words = validate(ROOT / "templates")
@@ -64,7 +72,7 @@ class BuildTests(unittest.TestCase):
     def test_duplicate_pair_and_missing_required_forms(self):
         original = self.rows()
         scenarios = [(original + [original[1]], "重複組合")]
-        for column, expected in ((2, "orth"), (3, "ipa")):
+        for column, expected in ((2, "orth"),):
             rows = copy.deepcopy(original)
             rows[1][column] = " \t"
             scenarios.append((rows, expected))
