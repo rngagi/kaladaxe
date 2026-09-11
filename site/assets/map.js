@@ -2,7 +2,7 @@
 export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   const L = window.L;
   if (!L) throw new Error("Leaflet 載入失敗");
-  const map = L.map(element, { zoomControl: false, zoomSnap: 0.25, zoomDelta: 0.5, minZoom: 5, maxZoom: 14, attributionControl: true });
+  const map = L.map(element, { zoomControl: false, zoomSnap: 0, zoomDelta: 0.5, scrollWheelZoom: false, minZoom: 5, maxZoom: 14, attributionControl: true });
   L.control.zoom({ position: "topright", zoomInTitle: "放大地圖", zoomOutTitle: "縮小地圖" }).addTo(map);
   map.attributionControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
   map.attributionControl.addAttribution('<a href="https://www.naturalearthdata.com/">Natural Earth</a>');
@@ -23,6 +23,7 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   };
   home.addTo(map);
   reset();
+  enableSmoothWheelZoom(map, element);
   const riversPane = map.createPane("atlasRivers");
   riversPane.style.zIndex = "410";
   riversPane.style.pointerEvents = "none";
@@ -32,11 +33,18 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   const labelsPane = map.createPane("atlasLabels");
   labelsPane.style.zIndex = "620";
   labelsPane.style.pointerEvents = "none";
+  labelsPane.style.transformOrigin = "0 0";
+  labelsPane.classList.add("leaflet-zoom-animated");
   const pins = L.layerGroup().addTo(map);
   const lines = L.layerGroup().addTo(map);
   let records = [];
   let selectedId = null;
   let frame = 0;
+  let zooming = false;
+  let zoomLayoutTimer = 0;
+  const zoomLayoutDelay = 200;
+  let labelZoom = map.getZoom();
+  let labelOrigin = map.layerPointToLatLng([0, 0]);
   let basemap = null;
   let baseRequest = null;
   let rivers = null;
@@ -149,6 +157,7 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   }
 
   function schedule() {
+    if (zooming || zoomLayoutTimer) return;
     if (!frame) frame = requestAnimationFrame(() => { frame = 0; layout(); });
   }
 
@@ -163,6 +172,10 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
     && a.y < b.y + b.height + 4 && a.y + a.height + 4 > b.y;
 
   function layout() {
+    // Bake the current view into a fresh layout after the scaled preview settles.
+    L.DomUtil.setTransform(labelsPane, L.point(0, 0), 1);
+    labelZoom = map.getZoom();
+    labelOrigin = map.layerPointToLatLng([0, 0]);
     lines.clearLayers();
     const size = map.getSize();
     const boxes = [];
@@ -266,9 +279,35 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
     schedule();
   }
 
-  map.on("moveend zoomend", schedule);
-  map.on("zoomstart", () => { labelsPane.style.opacity = "0"; linesPane.style.opacity = "0"; });
-  map.on("zoomend", () => { labelsPane.style.opacity = "1"; linesPane.style.opacity = "1"; });
+  function transformLabels(event) {
+    const zoom = event.zoom ?? map.getZoom();
+    const center = event.center ?? map.getCenter();
+    const origin = map.project(center, zoom).subtract(map.getSize().divideBy(2))
+      .subtract(map.containerPointToLayerPoint([0, 0])).round();
+    const offset = map.project(labelOrigin, zoom).round().subtract(origin);
+    L.DomUtil.setTransform(labelsPane, offset, map.getZoomScale(zoom, labelZoom));
+  }
+
+  map.on("zoomanim", transformLabels);
+  map.on("zoom viewreset", transformLabels);
+  map.on("moveend", schedule);
+  // Scale the existing label layout with the geography until zooming settles.
+  // Guard every layout request, including Leaflet's moveend after zoomend.
+  map.on("zoomstart", () => {
+    zooming = true;
+    clearTimeout(zoomLayoutTimer);
+    zoomLayoutTimer = 0;
+    cancelAnimationFrame(frame);
+    frame = 0;
+  });
+  map.on("zoomend", () => {
+    zooming = false;
+    clearTimeout(zoomLayoutTimer);
+    zoomLayoutTimer = setTimeout(() => {
+      zoomLayoutTimer = 0;
+      schedule();
+    }, zoomLayoutDelay);
+  });
   const observer = new ResizeObserver(() => { map.invalidateSize({ pan: false }); schedule(); });
   observer.observe(element);
   const detail = element.parentElement.querySelector("#detail");
@@ -280,4 +319,75 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   loadBasemap();
   loadRivers();
   return { setData, select, schedule, loadBasemap, loadRivers, reset };
+}
+
+
+// Trackpad events feed one continuous, frame-driven zoom instead of separate
+// Leaflet wheel animations. Keep the geographic point under the cursor fixed.
+function enableSmoothWheelZoom(map, element) {
+  let frame = 0;
+  let targetZoom = map.getZoom();
+  let cursor;
+  let anchor;
+  let lastTime = 0;
+  let applying = false;
+  let direction = 0;
+
+  function stop() {
+    cancelAnimationFrame(frame);
+    frame = 0;
+    direction = 0;
+  }
+
+  function step(time) {
+    const elapsed = Math.min(time - lastTime, 64);
+    lastTime = time;
+    const current = map.getZoom();
+    const remaining = targetZoom - current;
+    const done = Math.abs(remaining) < 0.001;
+    const zoom = done ? targetZoom : current + remaining * (1 - Math.exp(-elapsed / 45));
+    const center = map.unproject(map.project(anchor, zoom)
+      .subtract(cursor).add(map.getSize().divideBy(2)), zoom);
+    applying = true;
+    try {
+      map.setView(center, zoom, { animate: false });
+    } finally {
+      applying = false;
+    }
+    frame = done ? 0 : requestAnimationFrame(step);
+  }
+
+  function wheel(event) {
+    if (event.target.closest(".leaflet-control")) return;
+    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? map.getSize().y : 1;
+    const delta = -event.deltaY * unit * 0.9 / (event.ctrlKey ? 80 : 160);
+    if (!delta) return;
+    event.preventDefault();
+    event.stopPropagation();
+    map.stop();
+    const nextDirection = Math.sign(delta);
+    if (!frame || nextDirection !== direction) targetZoom = map.getZoom();
+    direction = nextDirection;
+    targetZoom = Math.max(map.getMinZoom(), Math.min(map.getMaxZoom(),
+      targetZoom + Math.max(-1, Math.min(1, delta))));
+    cursor = map.mouseEventToContainerPoint(event);
+    anchor = map.containerPointToLatLng(cursor);
+    if (!frame) {
+      lastTime = performance.now();
+      frame = requestAnimationFrame(step);
+    }
+  }
+
+  const stopForOtherMovement = () => { if (!applying) stop(); };
+  element.addEventListener("wheel", wheel, { passive: false });
+  element.addEventListener("pointerdown", stop);
+  element.addEventListener("keydown", stop);
+  map.on("movestart", stopForOtherMovement);
+  map.on("unload", () => {
+    stop();
+    element.removeEventListener("wheel", wheel);
+    element.removeEventListener("pointerdown", stop);
+    element.removeEventListener("keydown", stop);
+    map.off("movestart", stopForOtherMovement);
+  });
 }

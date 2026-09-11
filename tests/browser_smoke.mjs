@@ -254,7 +254,8 @@ try {
     const before = await page.locator(".leaflet-atlasLines-pane path").count();
     assert.ok(before > 0, "fixture should exercise connector lines");
     await page.locator(".leaflet-control-zoom-in").click();
-    await sleep(350);
+    // Allow the zoom animation and the 200 ms label layout debounce to finish.
+    await sleep(600);
     assert.equal((await layoutCheck(page)).pins, 6);
     await page.screenshot({ path: join(screenshots, "fixture-desktop.png"), fullPage: true });
   });
