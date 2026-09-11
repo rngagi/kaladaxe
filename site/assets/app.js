@@ -206,11 +206,11 @@ function renderConcepts() {
 
 function syncConcept() {
   const concept = conceptIndex.get(currentId);
-  $("current-series").textContent = demoActive ? "DEMO" : "基礎詞彙200+";
-  $("current-number").textContent = concept?.swadesh_number || "—";
+  $("current-series").textContent = demoActive ? "DEMO" : "基礎詞彙 200+";
+  $("current-number").textContent = concept ? "No. " + concept.swadesh_number : "—";
   $("current-zh").textContent = concept?.gloss_zh || "探索詞彙";
   $("current-en").textContent = concept?.gloss_en || "";
-  document.title = (concept ? concept.gloss_zh + " · " : "") + "kaladaxe · 基礎詞彙200+ 地圖";
+  document.title = (concept ? concept.gloss_zh + " · " : "") + "kaladaxe · 基礎詞彙 200+ 地圖";
   document.querySelectorAll("[data-concept-id]").forEach((button) => {
     button.setAttribute("aria-current", String(button.dataset.conceptId === currentId));
   });

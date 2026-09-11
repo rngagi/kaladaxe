@@ -1,6 +1,6 @@
 # kaladaxe
 
-臺灣原住民族語言「基礎詞彙200+」地圖。自訂詞表含 214 個概念、42 語言別，以及原始南島語（PAn）與原始馬來玻里尼西亞語（PMP）。
+臺灣原住民族語言「基礎詞彙 200+」地圖。自訂詞表含 214 個概念、42 語言別，以及原始南島語（PAn）與原始馬來玻里尼西亞語（PMP）。
 
 網站使用 HTML/CSS、Vanilla JavaScript 與 Leaflet；Python 在建置時產生靜態資料。
 
@@ -18,7 +18,7 @@ python3 -m http.server 8000 --directory dist
 
 ## 詞表與語料
 
-詞表由 kaladaxe 自行編排。原有概念 ID 保持固定，數詞移至最後，依一至十、二十、一百排列，總計 214 詞。內部欄位 swadesh_number 與檔名 swadesh.csv 沿用既有格式，前端統一顯示「基礎詞彙200+」。重新編號後，water 為第 145 詞；分享網址仍使用 ?concept=water。
+詞表由 kaladaxe 自行編排。原有概念 ID 保持固定，數詞移至最後，依一至十、二十、一百排列，總計 214 詞。內部欄位 swadesh_number 與檔名 swadesh.csv 沿用既有格式，前端統一顯示「基礎詞彙 200+」。重新編號後，water 為第 145 詞；分享網址仍使用 ?concept=water。
 
 語料來源為使用者提供的原住民族語言研究發展基金會《2026年學習詞表》42 份 Excel，以及 acd-2.0/cldf/forms.csv。
 
@@ -127,6 +127,19 @@ node tests/browser_smoke.mjs
 需 Playwright；PLAYWRIGHT_MODULE 可指定套件目錄，CHROME_EXECUTABLE 可指定 Chrome，PYTHON 可指定 Python。測試涵蓋正式資料、子路徑、搜尋、篩選、IPA 留白、下載失敗重試、請求競態、地圖遮罩、標籤與手機畫面。截圖輸出至 .work/browser-smoke/。
 
 左下角 k 連按五次可載入 999 合成示範語料；切回一般詞項或重新整理即回到正式資料。
+
+## 社群分享預覽
+
+`site/index.html` 提供靜態 Open Graph 與 Twitter Card 標題、說明及圖片，分享爬蟲不需執行 JavaScript。正式分享網址為 `https://rngagi.github.io/kaladaxe/`；更換網域或部署路徑時，需同步更新分享網址與圖片的絕對網址。
+
+`site/assets/social-preview.png` 為 1200 × 630 圖片，沿用網站 logo、底圖與水系。圖片已納入 Git，例行建置不需 Chrome；要重製圖片時，先依前述方式建置並啟動本地預覽，再執行：
+
+~~~sh
+node scripts/render_social_preview.mjs
+python3 scripts/build.py
+~~~
+
+渲染工具使用與瀏覽器測試相同的 `PLAYWRIGHT_MODULE`、`CHROME_EXECUTABLE` 設定，也可用第一個參數指定本地預覽網址。
 
 ## GitHub Pages
 

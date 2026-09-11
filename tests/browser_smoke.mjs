@@ -56,10 +56,15 @@ async function layoutCheck(page) {
       const box = label.getBoundingClientRect();
       const marker = [...document.querySelectorAll(".map-pin")].find((pin) => pin.dataset.varietyId === label.dataset.varietyId);
       const anchor = marker.closest(".leaflet-marker-icon").getBoundingClientRect();
-      const x = anchor.left + 8 + 12;
-      const y = anchor.top + 8 - box.height / 2;
-      const distance = Math.hypot(box.left - x, box.top - y);
+      const x = anchor.left + 8;
+      const y = anchor.top + 8;
+      const distance = Math.hypot(Math.max(box.left - x, 0, x - box.right), Math.max(box.top - y, 0, y - box.bottom));
       if (distance > 49) errors.push("offset " + distance + " for " + label.dataset.varietyId);
+      for (const pin of document.querySelectorAll(".map-pin")) {
+        const dot = pin.getBoundingClientRect();
+        if (box.left < dot.right + 2 && box.right > dot.left - 2
+          && box.top < dot.bottom + 2 && box.bottom > dot.top - 2) errors.push("label covers pin " + pin.dataset.varietyId);
+      }
       return box.toJSON();
     });
     for (let i = 0; i < rects.length; i++) {
@@ -360,10 +365,10 @@ try {
     const trigger = page.locator("#debug-trigger");
     assert.equal(await trigger.evaluate((el) => getComputedStyle(el).cursor), "default");
     for (let i = 0; i < 4; i++) await trigger.click();
-    assert.equal(await page.locator("#current-number").textContent(), "145");
+    assert.equal(await page.locator("#current-number").textContent(), "No. 145");
     assert.ok(!requests.some((url) => url.endsWith("/debug/999.json")));
     await trigger.click();
-    await page.waitForFunction(() => document.getElementById("current-number").textContent === "999");
+    await page.waitForFunction(() => document.getElementById("current-number").textContent === "No. 999");
     assert.equal(await page.locator(".map-pin").count(), 9);
     assert.equal(await page.locator(".map-pin.proto").count(), 0);
     assert.ok(await page.locator("#demo-notice").isVisible());
@@ -393,11 +398,11 @@ try {
     assert.equal(await page.locator(".map-pin").count(), 42);
     assert.equal(await page.locator("#variety-count").textContent(), "42");
     for (let i = 0; i < 5; i++) await trigger.click();
-    await page.waitForFunction(() => document.getElementById("current-number").textContent === "999");
+    await page.waitForFunction(() => document.getElementById("current-number").textContent === "No. 999");
     assert.equal(requests.filter((url) => url.endsWith("/debug/999.json")).length, 1);
     await page.reload();
     await settled(page);
-    assert.equal(await page.locator("#current-number").textContent(), "145");
+    assert.equal(await page.locator("#current-number").textContent(), "No. 145");
     assert.equal(await page.locator("#show-proto").isChecked(), false);
   });
   await check("demo download failure retries and stale activation is discarded", async () => {
@@ -410,7 +415,7 @@ try {
     for (let i = 0; i < 5; i++) await retry.locator("#debug-trigger").click();
     await retry.locator("#retry").waitFor({ state: "visible" });
     await retry.locator("#retry").click();
-    await retry.waitForFunction(() => document.getElementById("current-number").textContent === "999");
+    await retry.waitForFunction(() => document.getElementById("current-number").textContent === "No. 999");
     assert.equal(attempts, 2);
     await retry.close();
     const race = await context.newPage();
@@ -461,7 +466,7 @@ try {
     await settled(page);
     await page.screenshot({ path: join(screenshots, "production-mobile.png"), fullPage: true });
     for (let i = 0; i < 5; i++) await page.locator("#debug-trigger").click();
-    await page.waitForFunction(() => document.getElementById("current-number").textContent === "999");
+    await page.waitForFunction(() => document.getElementById("current-number").textContent === "No. 999");
     assert.equal(await page.locator(".map-pin").count(), 9);
     await page.locator("#show-proto").check();
     assert.equal(await page.locator(".map-pin").count(), 12);

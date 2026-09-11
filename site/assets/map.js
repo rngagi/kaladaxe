@@ -2,12 +2,27 @@
 export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   const L = window.L;
   if (!L) throw new Error("Leaflet 載入失敗");
-  const map = L.map(element, { zoomControl: false, zoomSnap: 0, zoomDelta: 0.5, scrollWheelZoom: false, minZoom: 5, maxZoom: 14, attributionControl: true });
+  const map = L.map(element, { zoomControl: false, zoomSnap: 0, zoomDelta: 0.5, scrollWheelZoom: false, bounceAtZoomLimits: false, minZoom: 5, maxZoom: 14, attributionControl: true });
   L.control.zoom({ position: "topright", zoomInTitle: "放大地圖", zoomOutTitle: "縮小地圖" }).addTo(map);
   map.attributionControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
   map.attributionControl.addAttribution('<a href="https://www.naturalearthdata.com/">Natural Earth</a>');
   const initialBounds = [[21.7, 119.25], [25.45, 122.2]];
-  const reset = () => map.fitBounds(initialBounds, { paddingTopLeft: [30, 65], paddingBottomRight: [30, 30], animate: false });
+  const homePaddingTopLeft = L.point(30, 65);
+  const homePaddingBottomRight = L.point(30, 30);
+  function updateMinimumZoom() {
+    const bounds = L.latLngBounds(initialBounds);
+    const extent = map.project(bounds.getSouthEast(), 0).subtract(map.project(bounds.getNorthWest(), 0));
+    const available = map.getSize().subtract(homePaddingTopLeft).subtract(homePaddingBottomRight);
+    if (available.x <= 0 || available.y <= 0) return;
+    const scale = Math.min(available.x / Math.abs(extent.x), available.y / Math.abs(extent.y));
+    // Compute independently of the previous minimum so smaller screens can fit too.
+    map.setMinZoom(Math.min(map.getMaxZoom(), map.getScaleZoom(scale, 0)));
+  }
+  const reset = () => {
+    updateMinimumZoom();
+    map.fitBounds(initialBounds, { paddingTopLeft: homePaddingTopLeft,
+      paddingBottomRight: homePaddingBottomRight, animate: false });
+  };
   const home = L.control({ position: "topright" });
   home.onAdd = () => {
     const wrapper = L.DomUtil.create("div", "home-control leaflet-bar");
@@ -161,11 +176,12 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
     if (!frame) frame = requestAnimationFrame(() => { frame = 0; layout(); });
   }
 
-  const candidates = [{ x: 0, y: 0 }];
-  for (const radius of [12, 24, 36, 48]) {
-    for (let direction = 0; direction < 8; direction++) {
-      const angle = direction * Math.PI / 4;
-      candidates.push({ x: Math.cos(angle) * radius, y: Math.sin(angle) * radius });
+  const maxLeaderLength = 48;
+  const candidates = [];
+  for (const radius of [16, 24, 36, maxLeaderLength]) {
+    for (let direction = 0; direction < 16; direction++) {
+      const angle = direction * Math.PI / 8;
+      candidates.push({ radius, x: Math.cos(angle), y: Math.sin(angle) });
     }
   }
   const overlaps = (a, b) => a.x < b.x + b.width + 4 && a.x + a.width + 4 > b.x
@@ -178,7 +194,11 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
     labelOrigin = map.layerPointToLatLng([0, 0]);
     lines.clearLayers();
     const size = map.getSize();
-    const boxes = [];
+    // Reserve every pin before placing any labels, including selection halos.
+    const boxes = records.map(({ marker }) => {
+      const anchor = map.latLngToContainerPoint(marker.getLatLng());
+      return { x: anchor.x - 12, y: anchor.y - 12, width: 24, height: 24 };
+    });
     // Chrome is a layout obstacle too, especially the selected detail card.
     const origin = element.getBoundingClientRect();
     for (const node of element.parentElement.querySelectorAll(".map-legend, .demo-notice:not([hidden]), .detail-card:not([hidden]), .map-notice:not([hidden]), .leaflet-control-zoom, .home-control")) {
@@ -205,23 +225,31 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
       if (anchor.x < 0 || anchor.x > size.x || anchor.y < 0 || anchor.y > size.y) continue;
       const width = label.offsetWidth;
       const height = label.offsetHeight;
-      const defaultPoint = { x: anchor.x + 12, y: anchor.y - height / 2 };
+      const defaultPoint = { x: anchor.x + 16, y: anchor.y - height / 2 };
       let placed = null;
       for (const offset of candidates) {
-        const box = { x: defaultPoint.x + offset.x, y: defaultPoint.y + offset.y, width, height };
+        // Anchor candidates to the label edge so wide labels can also sit left
+        // of a pin without needing to move their entire width through it.
+        const box = {
+          x: anchor.x + offset.x * offset.radius - width * (1 - offset.x) / 2,
+          y: anchor.y + offset.y * offset.radius - height * (1 - offset.y) / 2,
+          width, height,
+        };
         if (box.x < 4 || box.y < 4 || box.x + width > size.x - 4 || box.y + height > size.y - 4) continue;
         if (boxes.some((other) => overlaps(box, other))) continue;
-        placed = { ...box, offset };
+        const endpoint = [Math.max(box.x, Math.min(anchor.x, box.x + width)),
+          Math.max(box.y, Math.min(anchor.y, box.y + height))];
+        // Hide crowded labels rather than connecting them to distant empty space.
+        if (Math.hypot(endpoint[0] - anchor.x, endpoint[1] - anchor.y) > maxLeaderLength) continue;
+        placed = { ...box, endpoint };
         break;
       }
       if (!placed) continue;
       boxes.push(placed);
       L.DomUtil.setPosition(label, map.containerPointToLayerPoint([placed.x, placed.y]));
       label.style.visibility = "visible";
-      if (placed.offset.x !== 0 || placed.offset.y !== 0) {
-        const endpoint = [Math.max(placed.x, Math.min(anchor.x, placed.x + width)),
-          Math.max(placed.y, Math.min(anchor.y, placed.y + height))];
-        L.polyline([marker.getLatLng(), map.containerPointToLatLng(endpoint)], {
+      if (Math.abs(placed.x - defaultPoint.x) > 1 || Math.abs(placed.y - defaultPoint.y) > 1) {
+        L.polyline([marker.getLatLng(), map.containerPointToLatLng(placed.endpoint)], {
           pane: "atlasLines", interactive: false, color: selected ? "#991b1b" : "#9b8b7b",
           weight: 1, opacity: 0.65,
         }).addTo(lines);
@@ -308,7 +336,18 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
       schedule();
     }, zoomLayoutDelay);
   });
-  const observer = new ResizeObserver(() => { map.invalidateSize({ pan: false }); schedule(); });
+  let viewportSize = map.getSize();
+  const observer = new ResizeObserver(() => {
+    const wasAtMinimum = Math.abs(map.getZoom() - map.getMinZoom()) < 0.001;
+    map.invalidateSize({ pan: false });
+    const size = map.getSize();
+    if (!size.equals(viewportSize)) {
+      viewportSize = size;
+      updateMinimumZoom();
+      if (wasAtMinimum) reset();
+    }
+    schedule();
+  });
   observer.observe(element);
   const detail = element.parentElement.querySelector("#detail");
   if (detail) observer.observe(detail);

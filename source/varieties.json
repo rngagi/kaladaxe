@@ -53,11 +53,11 @@
     "native_name": null,
     "type": "dialect",
     "subgroup_id": "ami",
-    "latitude": 22.01,
-    "longitude": 120.75,
+    "latitude": 22.018,
+    "longitude": 120.838,
     "klokah_code": "ami_hc",
     "klokah_number": 5,
-    "location_note": "屏東恆春一帶（概略座標，可調整）"
+    "location_note": "屏東滿州附近（概略座標，可調整）"
   },
   {
     "id": "ata_sq",
@@ -65,11 +65,11 @@
     "native_name": null,
     "type": "dialect",
     "subgroup_id": "ata",
-    "latitude": 24.68,
-    "longitude": 121.3,
+    "latitude": 24.124,
+    "longitude": 121.175,
     "klokah_code": "ata_sq",
     "klokah_number": 6,
-    "location_note": "桃園復興一帶（概略座標，可調整）"
+    "location_note": "南投仁愛發祥瑞岩一帶（概略座標，可調整）"
   },
   {
     "id": "ata_su",
@@ -77,11 +77,11 @@
     "native_name": null,
     "type": "dialect",
     "subgroup_id": "ata",
-    "latitude": 24.32,
-    "longitude": 121.3,
+    "latitude": 24.36,
+    "longitude": 120.945,
     "klokah_code": "ata_su",
     "klokah_number": 7,
-    "location_note": "台中和平環山一帶（概略座標，可調整）"
+    "location_note": "苗栗泰安象鼻、士林一帶（概略座標，可調整）"
   },
   {
     "id": "ata_ml",
@@ -233,11 +233,11 @@
     "native_name": null,
     "type": "dialect",
     "subgroup_id": "bun",
-    "latitude": 23.59,
-    "longitude": 121.35,
+    "latitude": 23.795,
+    "longitude": 120.945,
     "klokah_code": "bun_bn",
     "klokah_number": 21,
-    "location_note": "花蓮卓溪一帶（概略座標，可調整）"
+    "location_note": "南投信義地利附近（概略座標，可調整）"
   },
   {
     "id": "bun_ib",
@@ -245,11 +245,11 @@
     "native_name": null,
     "type": "dialect",
     "subgroup_id": "bun",
-    "latitude": 23.12,
-    "longitude": 121.17,
+    "latitude": 23.759,
+    "longitude": 120.672,
     "klokah_code": "bun_ib",
     "klokah_number": 22,
-    "location_note": "台東海端一帶（概略座標，可調整）"
+    "location_note": "南投竹山一帶（概略座標，可調整）"
   },
   {
     "id": "pai_es",
@@ -377,11 +377,11 @@
     "native_name": null,
     "type": "language",
     "subgroup_id": "trv",
-    "latitude": 24.12,
-    "longitude": 121.62,
+    "latitude": 24.152611456543543,
+    "longitude": 121.4184353376416,
     "klokah_code": "trv",
     "klokah_number": 33,
-    "location_note": "花蓮秀林一帶（概略座標，可調整）"
+    "location_note": "托博闊（使用者提供座標）"
   },
   {
     "id": "kav",
@@ -390,10 +390,10 @@
     "type": "language",
     "subgroup_id": "kav",
     "latitude": 23.62,
-    "longitude": 121.54,
+    "longitude": 121.51,
     "klokah_code": "kav",
     "klokah_number": 34,
-    "location_note": "花蓮豐濱新社一帶（概略座標，可調整）"
+    "location_note": "花蓮豐濱新社一帶，標記向西調整至陸地（概略座標，可調整）"
   },
   {
     "id": "tso",

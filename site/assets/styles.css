@@ -57,6 +57,7 @@ a { color: var(--red); text-underline-offset: 4px; }
 .eyebrow { font: 10px/1.5 var(--sans); letter-spacing: 1.5px; color: var(--muted); }
 .current-concept { display: flex; align-items: center; gap: 30px; }
 .current-concept > .eyebrow { padding-right: 30px; border-right: 1px solid #ddd5cd; color: var(--red); }
+#current-number { display: inline-block; margin-left: 6px; padding: 3px 6px; background: var(--red); color: #faf7f3; border-radius: 0; letter-spacing: .4px; white-space: nowrap; }
 .current-concept h1 { margin: 0; display: flex; gap: 20px; align-items: baseline; font-size: 32px; font-weight: 600; }
 #current-en { font: italic 25px Georgia, serif; color: #918078; }
 .bar-context { margin-left: auto; display: flex; align-items: center; gap: 12px; font: 11px var(--sans); color: #796d65; }
