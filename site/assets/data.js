@@ -10,34 +10,40 @@ async function readJSON(url) {
 export function createDataStore() {
   const cache = new Map();
   const pending = new Map();
-  let knownConcepts = new Set();
+  let knownConcepts = new Map();
   let demo = null;
   let demoRequest = null;
 
   async function loadIndex() {
-    const [concepts, varieties, subgroups] = await Promise.all([
+    const [concepts, varieties, subgroups, learning] = await Promise.all([
       readJSON(new URL("data/concepts.json", siteRoot)),
       readJSON(new URL("data/varieties.json", siteRoot)),
       readJSON(new URL("data/subgroups.json", siteRoot)),
+      readJSON(new URL("data/learning/concepts.json", siteRoot)),
     ]);
-    knownConcepts = new Set(concepts.items.map((item) => item.id));
-    return { concepts, varieties, subgroups };
+    knownConcepts = new Map([
+      ["basic", new Set(concepts.items.map((item) => item.id))],
+      ["learning", new Set(learning.items.map((item) => item.id))],
+    ]);
+    return { concepts, varieties, subgroups, learning };
   }
 
-  function loadWord(id) {
-    if (!knownConcepts.has(id)) return Promise.reject(new Error("未知詞項"));
-    if (cache.has(id)) return Promise.resolve(cache.get(id));
-    if (pending.has(id)) return pending.get(id);
-    const request = readJSON(new URL("data/words/" + encodeURIComponent(id) + ".json", siteRoot))
+  function loadWord(id, mode = "basic") {
+    if (!knownConcepts.get(mode)?.has(id)) return Promise.reject(new Error("未知詞項"));
+    const key = mode + ":" + id;
+    if (cache.has(key)) return Promise.resolve(cache.get(key));
+    if (pending.has(key)) return pending.get(key);
+    const directory = mode === "learning" ? "data/learning/words/" : "data/words/";
+    const request = readJSON(new URL(directory + encodeURIComponent(id) + ".json", siteRoot))
       .then((data) => {
         if (data.concept_id !== id || !data.forms || Array.isArray(data.forms) || typeof data.forms !== "object") {
           throw new Error("詞項資料格式不正確");
         }
-        cache.set(id, data);
+        cache.set(key, data);
         return data;
       })
-      .finally(() => pending.delete(id));
-    pending.set(id, request);
+      .finally(() => pending.delete(key));
+    pending.set(key, request);
     return request;
   }
 

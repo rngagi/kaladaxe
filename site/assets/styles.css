@@ -73,6 +73,11 @@ a { color: var(--red); text-underline-offset: 4px; }
 .count { font: 10px var(--sans); background: #f3f0ec; border-radius: 4px; padding: 3px 6px; color: #877a70; }
 .summary-hint { font: 10px var(--sans); color: #9d9188; }
 .section-content { padding-bottom: 18px; }
+.mode-label { display: block; margin: 0 0 6px; font: 11px var(--sans); color: var(--muted); }
+.mode-select { width: 100%; margin-bottom: 12px; padding: 9px 10px; border: 1px solid #ddd3ca; border-radius: 0; background: #faf7f3; color: #5b332b; font: 12px var(--sans); cursor: pointer; }
+.mode-select:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+body[data-mode="learning"] .concept-button { grid-template-columns: 46px minmax(0, 1fr) minmax(0, 1fr); }
+body[data-mode="learning"] .concept-button .number { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .search-box { position: relative; display: flex; align-items: center; margin-bottom: 13px; }
 .search-box svg { position: absolute; left: 10px; width: 15px; height: 15px; color: #968b83; pointer-events: none; }
 .search-box input { width: 100%; background: #faf9f7; border: 1px solid var(--line); padding: 10px 10px 10px 32px; font: 11px var(--sans); height: 37px; color: var(--ink); }

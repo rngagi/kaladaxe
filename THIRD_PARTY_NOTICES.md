@@ -7,6 +7,7 @@
 - Language identifiers follow klokah commands/kl.py (dialect_names and dialect_mapping).
 - Proto forms: Robert Blust and Stephen Trussel, Austronesian Comparative Dictionary, CLDF edition: https://github.com/lexibank/acd . Local acd-2.0 metadata and LICENSE specify CC BY 4.0: https://creativecommons.org/licenses/by/4.0/ .
 - ACD Form IDs, original glosses and source levels are retained in source/word_sources.csv. PMP copies from PAn are explicitly marked. Orthography is retained; no IPA is inferred.
+- The learning-list mode additionally preserves 938 selected ACD source records in source/import/learning_acd_records.json, with explicit Form ID matches in source/import/learning_matches.json. Near meanings and PAn-to-PMP fallbacks are marked in the generated learning reports and word details; they are editorial mappings, not additional reconstructions attributed to ACD.
 
 ## Leaflet 1.9.4
 

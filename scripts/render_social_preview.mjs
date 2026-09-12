@@ -16,6 +16,15 @@ try {
   });
   await page.goto(process.argv[2] || "http://127.0.0.1:8000/");
   await page.waitForFunction(() => document.querySelector("#atlas-river-land path"));
+  await page.waitForFunction(() => /已收錄/.test(document.getElementById("coverage").textContent));
+  await page.evaluate(() => {
+    document.querySelector(".brand-description strong").textContent = "詞彙地圖";
+    const modes = document.createElement("span");
+    modes.className = "preview-modes";
+    modes.textContent = "基礎詞彙 200+ · 千詞表";
+    document.querySelector(".brand-description").append(modes);
+    document.querySelector(".header-note").textContent = "一個詞，看見族語的風景";
+  });
   await page.evaluate(() => document.fonts.ready);
   await page.addStyleTag({ content: `
     body { width: 1200px; height: 630px; overflow: hidden; }
@@ -31,6 +40,7 @@ try {
     .brand-description { margin-top: 32px; padding-left: 0; border: 0;
       font-size: 38px; letter-spacing: 3px; gap: 14px; }
     .brand-description strong { font-size: 36px; letter-spacing: 2px; }
+    .preview-modes { font-size: 24px; letter-spacing: 1px; color: #706662; }
     .header-note { display: block; margin-top: 44px; font-size: 28px; letter-spacing: 2px; }
   ` });
   await page.evaluate(() => {

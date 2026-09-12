@@ -10,6 +10,11 @@ import sys
 import tempfile
 from pathlib import Path
 
+if __package__:
+    from .learning import assemble, LearningError
+else:
+    from learning import assemble, LearningError
+
 ROOT = Path(__file__).resolve().parents[1]
 ID = re.compile(r"[a-z][a-z0-9_]*\Z")
 CSV_FIELDS = ["concept_id", "variety_id", "orth", "ipa", "note"]
@@ -130,7 +135,15 @@ def validate(source):
     except (OSError, UnicodeError, csv.Error) as error:
         line = getattr(locals().get("reader"), "line_num", 0)
         raise DataError(f"{path}:{line}: {error}") from error
+    validate_learning(source, concepts, varieties)
     return concepts, varieties, groups, words
+
+
+def validate_learning(source, concepts, varieties):
+    try:
+        return assemble(source, concepts, varieties)
+    except LearningError as error:
+        raise DataError(str(error)) from error
 
 
 def write_json(path, data):
@@ -160,6 +173,15 @@ def build(source=ROOT / "source", output=ROOT / "dist"):
         for key, word in words.items():
             word["forms"] = dict(sorted(word["forms"].items()))
             write_json(data / "words" / f"{key}.json", word)
+        learning, learning_words, reports = validate_learning(source, concepts, varieties)
+        learning_dir = data / "learning"
+        (learning_dir / "words").mkdir(parents=True)
+        write_json(learning_dir / "concepts.json", learning)
+        for key, word in learning_words.items():
+            write_json(learning_dir / "words" / f"{key}.json", word)
+        (learning_dir / "reports").mkdir()
+        for key, report in reports.items():
+            write_json(learning_dir / "reports" / f"{key}.json", report)
         index = staging / "index.html"
         html = index.read_text(encoding="utf-8")
         notice = '<aside class="test-banner">合成測試資料 · 僅供功能驗證，不代表真實語言資料</aside>' if concepts.get("test_data") is True else ""

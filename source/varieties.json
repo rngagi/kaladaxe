@@ -9,7 +9,7 @@
     "longitude": 121.6,
     "klokah_code": "ami_nt",
     "klokah_number": 1,
-    "location_note": "花蓮吉安一帶（概略座標，可調整）"
+    "location_note": "花蓮吉安一帶"
   },
   {
     "id": "ami_hk",
@@ -21,7 +21,7 @@
     "longitude": 121.36,
     "klokah_code": "ami_hk",
     "klokah_number": 2,
-    "location_note": "花蓮瑞穗一帶（概略座標，可調整）"
+    "location_note": "花蓮瑞穗一帶"
   },
   {
     "id": "ami_ha",
@@ -33,7 +33,7 @@
     "longitude": 121.38,
     "klokah_code": "ami_ha",
     "klokah_number": 3,
-    "location_note": "台東成功一帶（概略座標，可調整）"
+    "location_note": "台東成功一帶"
   },
   {
     "id": "ami_ml",
@@ -45,7 +45,7 @@
     "longitude": 121.13,
     "klokah_code": "ami_ml",
     "klokah_number": 4,
-    "location_note": "台東馬蘭一帶（概略座標，可調整）"
+    "location_note": "台東馬蘭一帶"
   },
   {
     "id": "ami_hc",
@@ -57,7 +57,7 @@
     "longitude": 120.838,
     "klokah_code": "ami_hc",
     "klokah_number": 5,
-    "location_note": "屏東滿州附近（概略座標，可調整）"
+    "location_note": "屏東滿州附近"
   },
   {
     "id": "ata_sq",
@@ -69,7 +69,7 @@
     "longitude": 121.175,
     "klokah_code": "ata_sq",
     "klokah_number": 6,
-    "location_note": "南投仁愛發祥瑞岩一帶（概略座標，可調整）"
+    "location_note": "南投仁愛發祥瑞岩一帶"
   },
   {
     "id": "ata_su",
@@ -81,7 +81,7 @@
     "longitude": 120.945,
     "klokah_code": "ata_su",
     "klokah_number": 7,
-    "location_note": "苗栗泰安象鼻、士林一帶（概略座標，可調整）"
+    "location_note": "苗栗泰安象鼻、士林一帶"
   },
   {
     "id": "ata_ml",
@@ -93,7 +93,7 @@
     "longitude": 120.94,
     "klokah_code": "ata_ml",
     "klokah_number": 8,
-    "location_note": "苗栗泰安汶水一帶（概略座標，可調整）"
+    "location_note": "苗栗泰安汶水一帶"
   },
   {
     "id": "ata_pl",
@@ -105,7 +105,7 @@
     "longitude": 121.09,
     "klokah_code": "ata_pl",
     "klokah_number": 9,
-    "location_note": "南投仁愛親愛一帶（概略座標，可調整）"
+    "location_note": "南投仁愛親愛一帶"
   },
   {
     "id": "ata_sk",
@@ -117,7 +117,7 @@
     "longitude": 121.43,
     "klokah_code": "ata_sk",
     "klokah_number": 10,
-    "location_note": "宜蘭大同四季一帶（概略座標，可調整）"
+    "location_note": "宜蘭大同四季一帶"
   },
   {
     "id": "ata_kl",
@@ -129,7 +129,7 @@
     "longitude": 121.5,
     "klokah_code": "ata_kl",
     "klokah_number": 11,
-    "location_note": "宜蘭大同寒溪一帶（概略座標，可調整）"
+    "location_note": "宜蘭大同寒溪一帶"
   },
   {
     "id": "say",
@@ -141,7 +141,7 @@
     "longitude": 121.0,
     "klokah_code": "say",
     "klokah_number": 13,
-    "location_note": "苗栗南庄東河一帶（概略座標，可調整）"
+    "location_note": "苗栗南庄東河一帶"
   },
   {
     "id": "tha",
@@ -153,7 +153,7 @@
     "longitude": 120.93,
     "klokah_code": "tha",
     "klokah_number": 14,
-    "location_note": "南投魚池日月潭伊達邵一帶（概略座標，可調整）"
+    "location_note": "南投魚池日月潭伊達邵一帶"
   },
   {
     "id": "sed_to",
@@ -165,7 +165,7 @@
     "longitude": 121.2,
     "klokah_code": "sed_to",
     "klokah_number": 15,
-    "location_note": "南投仁愛都達一帶（概略座標，可調整）"
+    "location_note": "南投仁愛都達一帶"
   },
   {
     "id": "sed_tg",
@@ -177,7 +177,7 @@
     "longitude": 121.13,
     "klokah_code": "sed_tg",
     "klokah_number": 16,
-    "location_note": "南投仁愛霧社一帶（概略座標，可調整）"
+    "location_note": "南投仁愛霧社一帶"
   },
   {
     "id": "sed_tr",
@@ -189,7 +189,7 @@
     "longitude": 121.19,
     "klokah_code": "sed_tr",
     "klokah_number": 17,
-    "location_note": "南投仁愛合作一帶（概略座標，可調整）"
+    "location_note": "南投仁愛合作一帶"
   },
   {
     "id": "bun_td",
@@ -201,7 +201,7 @@
     "longitude": 121.06,
     "klokah_code": "bun_td",
     "klokah_number": 18,
-    "location_note": "南投信義地利一帶（概略座標，可調整）"
+    "location_note": "南投信義地利一帶"
   },
   {
     "id": "bun_bh",
@@ -213,7 +213,7 @@
     "longitude": 121.08,
     "klokah_code": "bun_bh",
     "klokah_number": 19,
-    "location_note": "南投信義雙龍一帶（概略座標，可調整）"
+    "location_note": "南投信義雙龍一帶"
   },
   {
     "id": "bun_vt",
@@ -225,7 +225,7 @@
     "longitude": 121.01,
     "klokah_code": "bun_vt",
     "klokah_number": 20,
-    "location_note": "南投信義潭南一帶（概略座標，可調整）"
+    "location_note": "南投信義潭南一帶"
   },
   {
     "id": "bun_bn",
@@ -237,7 +237,7 @@
     "longitude": 120.945,
     "klokah_code": "bun_bn",
     "klokah_number": 21,
-    "location_note": "南投信義地利附近（概略座標，可調整）"
+    "location_note": "南投信義地利附近"
   },
   {
     "id": "bun_ib",
@@ -249,7 +249,7 @@
     "longitude": 120.672,
     "klokah_code": "bun_ib",
     "klokah_number": 22,
-    "location_note": "南投竹山一帶（概略座標，可調整）"
+    "location_note": "南投竹山一帶"
   },
   {
     "id": "pai_es",
@@ -261,7 +261,7 @@
     "longitude": 120.99,
     "klokah_code": "pai_es",
     "klokah_number": 23,
-    "location_note": "台東太麻里一帶（概略座標，可調整）"
+    "location_note": "台東太麻里一帶"
   },
   {
     "id": "pai_nt",
@@ -273,7 +273,7 @@
     "longitude": 120.65,
     "klokah_code": "pai_nt",
     "klokah_number": 24,
-    "location_note": "屏東三地門一帶（概略座標，可調整）"
+    "location_note": "屏東三地門一帶"
   },
   {
     "id": "pai_ct",
@@ -285,7 +285,7 @@
     "longitude": 120.69,
     "klokah_code": "pai_ct",
     "klokah_number": 25,
-    "location_note": "屏東來義一帶（概略座標，可調整）"
+    "location_note": "屏東來義一帶"
   },
   {
     "id": "pai_st",
@@ -297,7 +297,7 @@
     "longitude": 120.86,
     "klokah_code": "pai_st",
     "klokah_number": 26,
-    "location_note": "屏東獅子一帶（概略座標，可調整）"
+    "location_note": "屏東獅子一帶"
   },
   {
     "id": "ruk_es",
@@ -309,7 +309,7 @@
     "longitude": 121.04,
     "klokah_code": "ruk_es",
     "klokah_number": 27,
-    "location_note": "台東卑南東興一帶（概略座標，可調整）"
+    "location_note": "台東卑南東興一帶"
   },
   {
     "id": "ruk_bd",
@@ -321,7 +321,7 @@
     "longitude": 120.73,
     "klokah_code": "ruk_bd",
     "klokah_number": 28,
-    "location_note": "屏東霧台一帶（概略座標，可調整）"
+    "location_note": "屏東霧台一帶"
   },
   {
     "id": "ruk_tw",
@@ -333,7 +333,7 @@
     "longitude": 120.79,
     "klokah_code": "ruk_tw",
     "klokah_number": 29,
-    "location_note": "屏東霧台大武一帶（概略座標，可調整）"
+    "location_note": "屏東霧台大武一帶"
   },
   {
     "id": "ruk_tn",
@@ -345,7 +345,7 @@
     "longitude": 120.72,
     "klokah_code": "ruk_tn",
     "klokah_number": 30,
-    "location_note": "高雄茂林多納一帶（概略座標，可調整）"
+    "location_note": "高雄茂林多納一帶"
   },
   {
     "id": "ruk_mg",
@@ -357,7 +357,7 @@
     "longitude": 120.66,
     "klokah_code": "ruk_mg",
     "klokah_number": 31,
-    "location_note": "高雄茂林一帶（概略座標，可調整）"
+    "location_note": "高雄茂林一帶"
   },
   {
     "id": "ruk_mn",
@@ -369,7 +369,7 @@
     "longitude": 120.69,
     "klokah_code": "ruk_mn",
     "klokah_number": 32,
-    "location_note": "高雄茂林萬山一帶（概略座標，可調整）"
+    "location_note": "高雄茂林萬山一帶"
   },
   {
     "id": "trv",
@@ -381,7 +381,7 @@
     "longitude": 121.4184353376416,
     "klokah_code": "trv",
     "klokah_number": 33,
-    "location_note": "托博闊（使用者提供座標）"
+    "location_note": "托博闊"
   },
   {
     "id": "kav",
@@ -393,7 +393,7 @@
     "longitude": 121.51,
     "klokah_code": "kav",
     "klokah_number": 34,
-    "location_note": "花蓮豐濱新社一帶，標記向西調整至陸地（概略座標，可調整）"
+    "location_note": "花蓮豐濱新社一帶，標記向西調整至陸地"
   },
   {
     "id": "tso",
@@ -405,7 +405,7 @@
     "longitude": 120.75,
     "klokah_code": "tso",
     "klokah_number": 35,
-    "location_note": "嘉義阿里山達邦一帶（概略座標，可調整）"
+    "location_note": "嘉義阿里山達邦一帶"
   },
   {
     "id": "knv",
@@ -417,7 +417,7 @@
     "longitude": 120.72,
     "klokah_code": "knv",
     "klokah_number": 36,
-    "location_note": "高雄那瑪夏達卡努瓦一帶（概略座標，可調整）"
+    "location_note": "高雄那瑪夏達卡努瓦一帶"
   },
   {
     "id": "hla",
@@ -429,7 +429,7 @@
     "longitude": 120.82,
     "klokah_code": "hla",
     "klokah_number": 37,
-    "location_note": "高雄桃源桃源里一帶（概略座標，可調整）"
+    "location_note": "高雄桃源桃源里一帶"
   },
   {
     "id": "puy_py",
@@ -441,7 +441,7 @@
     "longitude": 121.11,
     "klokah_code": "puy_py",
     "klokah_number": 38,
-    "location_note": "台東南王一帶（概略座標，可調整）"
+    "location_note": "台東南王一帶"
   },
   {
     "id": "puy_tp",
@@ -453,7 +453,7 @@
     "longitude": 121.04,
     "klokah_code": "puy_tp",
     "klokah_number": 39,
-    "location_note": "台東知本一帶（概略座標，可調整）"
+    "location_note": "台東知本一帶"
   },
   {
     "id": "puy_ws",
@@ -465,7 +465,7 @@
     "longitude": 121.09,
     "klokah_code": "puy_ws",
     "klokah_number": 40,
-    "location_note": "台東卑南初鹿一帶（概略座標，可調整）"
+    "location_note": "台東卑南初鹿一帶"
   },
   {
     "id": "puy_ks",
@@ -477,7 +477,7 @@
     "longitude": 121.05,
     "klokah_code": "puy_ks",
     "klokah_number": 41,
-    "location_note": "台東建和一帶（概略座標，可調整）"
+    "location_note": "台東建和一帶"
   },
   {
     "id": "yam",
@@ -489,7 +489,7 @@
     "longitude": 121.55,
     "klokah_code": "yam",
     "klokah_number": 42,
-    "location_note": "台東蘭嶼一帶（概略座標，可調整）"
+    "location_note": "台東蘭嶼一帶"
   },
   {
     "id": "sak",
@@ -501,7 +501,7 @@
     "longitude": 121.61,
     "klokah_code": "sak",
     "klokah_number": 43,
-    "location_note": "花蓮北埔一帶（概略座標，可調整）"
+    "location_note": "花蓮北埔一帶"
   },
   {
     "id": "pan",

@@ -27,6 +27,58 @@ let demoActive = false;
 let retryDemo = false;
 let debugClicks = 0;
 let lastDebugClick = 0;
+let currentMode = "basic";
+let catalogs = null;
+const modeNames = { basic: "基礎詞彙 200+", learning: "千詞表（學習詞表）" };
+
+function defaultConcept() {
+  return currentMode === "learning" ? "21-02" : "water";
+}
+
+function conceptNumber(concept) {
+  return concept.entry_id || concept.swadesh_number;
+}
+
+function animateMode(selectors) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  for (const element of document.querySelectorAll(selectors)) {
+    element.getAnimations().forEach((animation) => animation.cancel());
+    element.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: 280, easing: "ease-out" });
+  }
+}
+
+async function switchMode(mode, id, historyMode = "none", animate = false) {
+  const nextMode = mode === "learning" && catalogs.learning.items.length ? "learning" : "basic";
+  const changed = nextMode !== currentMode;
+  if (changed && id === undefined) {
+    if (nextMode === "learning") {
+      id = catalogs.learning.items.find((item) => item.concept_ids.includes(currentId))?.id;
+    } else {
+      const linked = conceptIndex.get(currentId)?.concept_ids || [];
+      id = catalogs.basic.items.find((item) => linked.includes(item.id))?.id;
+    }
+  }
+  currentMode = nextMode;
+  const catalog = catalogs[currentMode];
+  concepts = catalog.items;
+  conceptIndex = new Map(concepts.map((item) => [item.id, item]));
+  $("wordlist-mode").value = currentMode;
+  document.body.dataset.mode = currentMode;
+  $("concept-count").textContent = concepts.length;
+  document.querySelector(".search-hint").textContent = concepts.length + " 詞";
+  $("source-version").textContent = "目前詞表版本：" + (catalog.source.version || "自訂詞表") + "。";
+  $("concept-list").setAttribute("aria-label", modeNames[currentMode] + " 詞項");
+  if (changed) $("concept-search").value = "";
+  renderConcepts();
+  if (changed && animate) animateMode(".current-concept, #concept-list");
+  const selected = selectConcept(id ?? (changed ? defaultConcept() : currentId || defaultConcept()), historyMode);
+  const version = requestVersion;
+  await selected;
+  if (version !== requestVersion) return;
+  if (changed && animate && loadState === "ready") animateMode("#map, #results");
+  const active = $("concept-list").querySelector('[aria-current="true"]');
+  if (active) $("concept-list").scrollTop = active.offsetTop - $("concept-list").offsetTop - 30;
+}
 
 function node(tag, className, text) {
   const result = document.createElement(tag);
@@ -102,6 +154,7 @@ function showDetail(id, reveal = false) {
   const metadata = $("detail-metadata");
   metadata.replaceChildren();
   const fields = [
+    ["來源原義", form.source_gloss],
     ["語群分類", pathOf(variety)],
     [variety.type === "proto" ? "地圖位置" : "地圖座標",
       Math.abs(variety.latitude).toFixed(4) + (variety.latitude < 0 ? "° S / " : "° N / ") + Math.abs(variety.longitude).toFixed(4) + (variety.longitude < 0 ? "° W" : "° E")],
@@ -187,7 +240,7 @@ function applyFilter(id) {
 function renderConcepts() {
   const query = $("concept-search").value.trim().toLocaleLowerCase().normalize("NFC");
   const matches = concepts.filter((concept) =>
-    [concept.swadesh_number, concept.gloss_zh, concept.gloss_en].some((value) => String(value).toLocaleLowerCase().normalize("NFC").includes(query)));
+    [conceptNumber(concept), concept.gloss_zh, concept.gloss_en, ...(concept.aliases || [])].some((value) => String(value).toLocaleLowerCase().normalize("NFC").includes(query)));
   const list = $("concept-list");
   list.replaceChildren();
   for (const concept of matches) {
@@ -197,7 +250,7 @@ function renderConcepts() {
     button.setAttribute("aria-current", String(concept.id === currentId));
     const english = node("span", "english", concept.gloss_en);
     english.lang = "en";
-    button.append(node("span", "number", String(concept.swadesh_number).padStart(3, "0")), node("span", "", concept.gloss_zh), english);
+    button.append(node("span", "number", concept.entry_id || String(concept.swadesh_number).padStart(3, "0")), node("span", "", concept.gloss_zh), english);
     button.addEventListener("click", () => selectConcept(concept.id, "push"));
     list.append(button);
   }
@@ -206,11 +259,11 @@ function renderConcepts() {
 
 function syncConcept() {
   const concept = conceptIndex.get(currentId);
-  $("current-series").textContent = demoActive ? "DEMO" : "基礎詞彙 200+";
-  $("current-number").textContent = concept ? "No. " + concept.swadesh_number : "—";
+  $("current-series").textContent = demoActive ? "DEMO" : modeNames[currentMode];
+  $("current-number").textContent = concept ? "No. " + conceptNumber(concept) : "—";
   $("current-zh").textContent = concept?.gloss_zh || "探索詞彙";
   $("current-en").textContent = concept?.gloss_en || "";
-  document.title = (concept ? concept.gloss_zh + " · " : "") + "kaladaxe · 基礎詞彙 200+ 地圖";
+  document.querySelector(".brand-description strong").textContent = modeNames[currentMode] + " 地圖";
   document.querySelectorAll("[data-concept-id]").forEach((button) => {
     button.setAttribute("aria-current", String(button.dataset.conceptId === currentId));
   });
@@ -287,6 +340,8 @@ function renderWord() {
 function updateURL(mode) {
   if (demoActive) return; // Debug is session-only and never becomes a shareable concept URL.
   const url = new URL(location.href);
+  if (currentMode === "learning") url.searchParams.set("mode", "learning");
+  else url.searchParams.delete("mode");
   if (currentId) url.searchParams.set("concept", currentId);
   else url.searchParams.delete("concept");
   if (mode === "push" && url.href !== location.href) history.pushState(null, "", url);
@@ -294,7 +349,7 @@ function updateURL(mode) {
 }
 
 async function selectConcept(id, mode = "none") {
-  const next = conceptIndex.has(id) ? id : conceptIndex.has("water") ? "water" : concepts[0]?.id;
+  const next = conceptIndex.has(id) ? id : conceptIndex.has(defaultConcept()) ? defaultConcept() : concepts[0]?.id;
   const useDemo = Boolean(demoData && next === demoData.concept.id);
   if (useDemo !== demoActive) {
     demoActive = useDemo;
@@ -329,7 +384,7 @@ async function selectConcept(id, mode = "none") {
     return;
   }
   try {
-    const data = useDemo ? { concept_id: next, forms: demoData.forms } : await store.loadWord(next);
+    const data = useDemo ? { concept_id: next, forms: demoData.forms } : await store.loadWord(next, currentMode);
     if (version !== requestVersion) return;
     word = data;
     loadState = "ready";
@@ -352,24 +407,19 @@ async function boot() {
   try {
     if (!atlas) atlas = createAtlas($("map"), (id) => showDetail(id), (failed) => { $("basemap-error").hidden = !failed; }, (failed) => { $("rivers-error").hidden = !failed; });
     const index = await store.loadIndex();
+    catalogs = { basic: index.concepts, learning: index.learning };
     editorialData = { varieties: index.varieties, subgroups: index.subgroups };
-    concepts = index.concepts.items;
     varieties = index.varieties;
     groups = index.subgroups;
-    conceptIndex = new Map(concepts.map((item) => [item.id, item]));
     varietyIndex = new Map(varieties.map((item) => [item.id, item]));
     groupIndex = new Map(groups.map((item) => [item.id, item]));
     initialized = true;
-    $("concept-count").textContent = concepts.length;
-    document.querySelector(".search-hint").textContent = concepts.length + " 詞";
-    $("source-version").textContent = "版本：" + (index.concepts.source.version || "自訂詞表") + "。";
     $("concept-search").disabled = false;
+    $("wordlist-mode").disabled = false;
+    $("wordlist-mode").querySelector('[value="learning"]').disabled = !index.learning.items.length;
     renderTree();
-    const fromURL = new URL(location.href).searchParams.get("concept");
-    renderConcepts();
-    await selectConcept(fromURL || "water", "replace");
-    const active = $("concept-list").querySelector('[aria-current="true"]');
-    if (active) $("concept-list").scrollTop = active.offsetTop - $("concept-list").offsetTop - 30;
+    const params = new URL(location.href).searchParams;
+    await switchMode(params.get("mode"), params.get("concept") || undefined, "replace");
   } catch {
     initialized = false;
     $("coverage").textContent = "載入失敗";
@@ -418,6 +468,9 @@ $("show-languages").addEventListener("change", updateVisibility);
 $("show-proto").addEventListener("change", updateVisibility);
 $("rivers-retry").addEventListener("click", () => atlas?.loadRivers());
 $("concept-search").addEventListener("input", renderConcepts);
+$("wordlist-mode").addEventListener("change", (event) => {
+  if (initialized) switchMode(event.target.value, undefined, "push", true);
+});
 $("all-groups").addEventListener("click", () => { if (initialized) applyFilter(null); });
 $("detail-close").addEventListener("click", () => closeDetail(true));
 $("retry").addEventListener("click", () => retryDemo ? enterDemo() : initialized ? selectConcept(currentId) : boot());
@@ -432,7 +485,10 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !$("about-dialog").open && !$("detail").hidden) closeDetail(true);
 });
 window.addEventListener("popstate", () => {
-  if (initialized) selectConcept(new URL(location.href).searchParams.get("concept") || "water");
+  if (initialized) {
+    const params = new URL(location.href).searchParams;
+    switchMode(params.get("mode"), params.get("concept") || (params.get("mode") === "learning" ? "21-02" : "water"), "replace", true);
+  }
 });
 if (matchMedia("(max-width: 760px)").matches) {
   document.querySelector(".classification-section").open = false;

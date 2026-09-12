@@ -4,24 +4,37 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#991b1b">
-  <meta name="description" content="在台灣地圖上探索原住民族語言、方言與原始語言的 基礎詞彙 200+、書寫形式及 IPA。">
-  <title>kaladaxe · 台灣原住民族語言 基礎詞彙 200+ 地圖</title>
+  <meta name="description" content="透過互動式地圖探索臺灣原住民族 42 語言別的詞彙，提供基礎詞彙 200+ 與千詞表模式，比較族語書寫形式。">
+  <title>kaladaxe｜臺灣原住民族語言詞彙地圖</title>
+  <link rel="canonical" href="https://rngagi.github.io/kaladaxe/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="zh_TW">
   <meta property="og:site_name" content="kaladaxe">
-  <meta property="og:title" content="kaladaxe · 台灣原住民族語言 基礎詞彙 200+ 地圖">
-  <meta property="og:description" content="一個詞，看見語言的風景。在台灣地圖上探索原住民族語言、方言與原始語言的基礎詞彙。">
+  <meta property="og:title" content="kaladaxe｜一個詞，看見族語的風景">
+  <meta property="og:description" content="在地圖上比較 42 語言別的詞彙，探索族語與祖語的異同。">
   <meta property="og:url" content="https://rngagi.github.io/kaladaxe/">
   <meta property="og:image" content="https://rngagi.github.io/kaladaxe/assets/social-preview.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="kaladaxe 標誌、臺灣原住民族語言基礎詞彙 200+ 地圖字樣，以及台灣與離島的海岸、水系底圖。">
+  <meta property="og:image:alt" content="kaladaxe 標誌、臺灣原住民族語言詞彙地圖、基礎詞彙 200+ 與千詞表字樣，以及臺灣與離島的海岸、水系底圖。">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="kaladaxe · 台灣原住民族語言 基礎詞彙 200+ 地圖">
-  <meta name="twitter:description" content="一個詞，看見語言的風景。在台灣地圖上探索原住民族語言、方言與原始語言的基礎詞彙。">
+  <meta name="twitter:title" content="kaladaxe｜一個詞，看見族語的風景">
+  <meta name="twitter:description" content="在地圖上比較 42 語言別的詞彙，探索族語與祖語的異同。">
   <meta name="twitter:image" content="https://rngagi.github.io/kaladaxe/assets/social-preview.png">
-  <meta name="twitter:image:alt" content="kaladaxe 標誌與台灣海岸、水系底圖。">
+  <meta name="twitter:image:alt" content="kaladaxe 標誌、臺灣原住民族語言詞彙地圖、基礎詞彙 200+ 與千詞表字樣，以及臺灣與離島的海岸、水系底圖。">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://rngagi.github.io/kaladaxe/#webpage",
+    "url": "https://rngagi.github.io/kaladaxe/",
+    "name": "kaladaxe｜臺灣原住民族語言詞彙地圖",
+    "description": "透過互動式地圖探索臺灣原住民族 42 語言別的詞彙，提供基礎詞彙 200+ 與千詞表模式，比較族語書寫形式。",
+    "inLanguage": "zh-Hant",
+    "image": "https://rngagi.github.io/kaladaxe/assets/social-preview.png"
+  }
+  </script>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./assets/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="./assets/styles.css">
@@ -51,6 +64,11 @@
       <details class="sidebar-section concept-section" open>
         <summary><span>選擇詞項</span><span id="concept-count" class="count">214</span></summary>
         <div class="section-content">
+          <label class="mode-label" for="wordlist-mode">詞表模式</label>
+          <select id="wordlist-mode" class="mode-select" aria-controls="concept-list" disabled>
+            <option value="basic">基礎詞彙 200+</option>
+            <option value="learning">千詞表（學習詞表）</option>
+          </select>
           <label class="search-box" for="concept-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>
             <input id="concept-search" type="search" placeholder="搜尋中文、英文或編號" autocomplete="off" aria-controls="concept-list" disabled>
@@ -114,7 +132,8 @@
     <span class="eyebrow">ABOUT THE ATLAS</span>
     <h2 id="about-title">一個詞，連結不同的語言。</h2>
     <p>kaladaxe 是噶哈巫語「地圖」之意。本站呈現台灣原住民族語言、方言與原始語言的基礎詞彙，呈現書寫形式與已收錄的國際音標，讓語言之間的異同得以被看見。</p>
-    <p>基礎詞彙 200+ 是本站自訂詞表，含 214 個概念。<span id="source-version"></span></p>
+    <p>基礎詞彙 200+ 是本站自訂詞表，含 214 個概念；千詞表（學習詞表）依原始編號收錄 1,094 項。<span id="source-version"></span></p>
+    <p>學習詞表保留各語言別原義；近義祖語與 PAn 補入均附來源及差異說明。原表「無此詞彙」視為缺項。<a href="./data/learning/reports/summary.json" target="_blank" rel="noreferrer">收錄統計</a> · <a href="./data/learning/reports/missing.json" target="_blank" rel="noreferrer">缺項清單</a> · <a href="./data/learning/reports/near_matches.json" target="_blank" rel="noreferrer">近義對應</a></p>
     <p>42 語言別語料整理自原住民族語言研究發展基金會《2026年學習詞表》；原始南島語（PAn）與原始馬來玻里尼西亞語（PMP）形式取自 <a href="https://github.com/lexibank/acd" target="_blank" rel="noreferrer">Austronesian Comparative Dictionary</a>（Blust &amp; Trussel；CLDF 版，CC BY 4.0）。PMP 缺項以 PAn 補入，詳見各詞備註。</p>
     <p>語言別位置採代表地點的概略座標；PAn 置於台南新化，PMP 置於台東市近海。</p>
     <p class="credits">水系呈現全長至少 40 公里的主流，依底圖海岸輪廓裁切。<a href="./assets/hydrosheds-license.pdf" target="_blank" rel="noreferrer">HydroSHEDS 授權文件</a></p>

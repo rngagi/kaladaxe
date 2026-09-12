@@ -5,11 +5,57 @@ import math
 import shutil
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
+from html.parser import HTMLParser
 from pathlib import Path
 from scripts.build import ROOT, DataError, build, validate, write_json
 
 
 class BuildTests(unittest.TestCase):
+    def test_homepage_seo_static_metadata_and_single_url_sitemap(self):
+        class Head(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.meta, self.canonicals, self.title, self.structured = {}, [], "", ""
+                self.in_title = self.in_json = False
+
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if tag == "meta":
+                    self.meta[attrs.get("name", attrs.get("property"))] = attrs.get("content")
+                if tag == "link" and attrs.get("rel") == "canonical":
+                    self.canonicals.append(attrs["href"])
+                if tag == "title": self.in_title = True
+                if tag == "script" and attrs.get("type") == "application/ld+json": self.in_json = True
+
+            def handle_endtag(self, tag):
+                if tag == "title": self.in_title = False
+                if tag == "script": self.in_json = False
+
+            def handle_data(self, data):
+                if self.in_title: self.title += data
+                if self.in_json: self.structured += data
+
+        build(self.source, self.output)
+        head = Head()
+        head.feed((self.output / "index.html").read_text())
+        homepage = "https://rngagi.github.io/kaladaxe/"
+        self.assertEqual(head.title, "kaladaxe｜臺灣原住民族語言詞彙地圖")
+        self.assertEqual(head.canonicals, [homepage])
+        self.assertEqual(head.meta["og:url"], homepage)
+        self.assertEqual(head.meta["og:title"], "kaladaxe｜一個詞，看見族語的風景")
+        self.assertEqual(head.meta["og:description"], "在地圖上比較 42 語言別的詞彙，探索族語與祖語的異同。")
+        for field in ("title", "description", "image", "image:alt"):
+            self.assertEqual(head.meta["og:" + field], head.meta["twitter:" + field])
+        structured = json.loads(head.structured)
+        self.assertEqual(structured["@type"], "WebPage")
+        self.assertEqual(structured["name"], head.title)
+        self.assertEqual(structured["description"], head.meta["description"])
+        self.assertEqual(structured["url"], homepage)
+        self.assertEqual(structured["image"], head.meta["og:image"])
+        sitemap = ET.parse(self.output / "sitemap.xml")
+        self.assertEqual([loc.text for loc in sitemap.findall(".//{http://www.sitemaps.org/schemas/sitemap/0.9}loc")], [homepage])
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

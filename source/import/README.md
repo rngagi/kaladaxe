@@ -11,3 +11,15 @@ PMP 陣列為空、PAn 有值時，匯入器複製對應的 PAn 並標記 fallba
 learning.csv 保存全部 Excel 詞條，包括「無此詞彙」及未對應的詞。word_sources.csv 展開每個概念的來源列；同一詞形有多個來源也會逐筆記錄。地圖 swadesh.csv 依概念與語言別合併形式，IPA 留白。missing.csv 列出所有未產生地圖詞形的組合。
 
 重新執行匯入前，先用 --out .work/reimport 檢查產物，以保留 source/swadesh.csv 的後續手動校訂。import_summary.json 保存來源檔案 SHA-256 與涵蓋率。
+
+## 學習詞表獨立對應
+
+`learning_matches.json` 以原始 `entry_id` 為鍵，涵蓋全部 1,094 個編號；`concepts` 是與基礎詞彙的導覽關係，`proto.pan`／`proto.pmp` 明列選用的 ACD Form ID，`supplements` 明列同語言別的替代來源編號。每筆對應包含 `relation` 與 `note`；`broader`／`narrower` 指來源相對於目標學習詞義較廣／較窄，不代表信心分數。
+
+學習詞形直接取原始資料列，保留每個語言的中文、拼寫與備註，不把原有基礎詞彙的多義形式整批複製。包含式與排除式祖語分開選用。樹枝不沿用「拐杖」形式，抓癢不沿用「刮除」形式，長度短不沿用身高矮。英文同形異義也須排除，例如 corn（繭）不對應玉米、well（水井）不對應好好的、crow（啼叫）不對應烏鴉。
+
+`learning_acd_records.json` 保存從本地 5,993 筆 PAn／PMP 摘錄選用的 938 筆完整來源記錄與摘錄雜湊。來源無星號或帶有 Doubt／Sic 標記的不選用。正式建置不進行模糊搜尋，也不依賴未納入 Git 的本地摘錄。檢查候選使用的英文釋義不能取代原始 ACD 來源；只有固定 Form ID 與說明才是正式對應。
+
+PMP 沒有直接對應時沿用 PAn 補入規則並標記 `fallback_from=pan`；補入不表示 ACD 本身存在該 PMP 重建。近義和詞義範圍差異在詳情及 `dist/data/learning/reports/near_matches.json` 保留，供後續校訂。來源內的「無此詞彙」視為缺項；兩筆明列的同語言補入之外仍留缺，不能跨語言別填詞。
+
+修改原始 CSV 必須重新覆核對應，再更新 `source_sha256` 與預期數量。`python3 scripts/build.py --check` 會檢查缺少來源、語言層級、重複編號組合、未知概念、無效補入及未使用的 ACD 摘錄；成功後一般建置會產生完整涵蓋率、補入、近義、異義及缺項報告。
