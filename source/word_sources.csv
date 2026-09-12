@@ -9407,7 +9407,6 @@ count,pan,*SipuR,acd,19072-d85508f87f9072aa0d149b17db0ededf-1,to count,pan,acd-2
 count,pmp,*bilaŋ₁,acd,19081-4ca9302c9b893f018d8d91860b7586c7-1,"to count, calculate; hold valuable",pmp,acd-2.0/cldf/forms.csv,,,,
 say,pmp,*baqbaq,acd,19081-f172b08c6117a31988d59944b4f4ab2f-1,"mouth, opening; speak, say",pmp,acd-2.0/cldf/forms.csv,,,,
 sing,pan,*quyaS,acd,19072-203b22cabdd5e6871081b4223fad873b-1,"to sing; song, tune, melody",pan,acd-2.0/cldf/forms.csv,,,,
-sing,pmp,*quyaS,acd,19072-203b22cabdd5e6871081b4223fad873b-1,"to sing; song, tune, melody",pan,acd-2.0/cldf/forms.csv,,,,pan
 float,pmp,*apuŋ,acd,19081-546ade640b6edfbc8a086ef31347e768-1,float,pmp,acd-2.0/cldf/forms.csv,,,,
 flow,pmp,*qaliR,acd,19081-c514793fed9e2fbd48defcf9cf935dc9-1,to flow,pmp,acd-2.0/cldf/forms.csv,,,,
 swell,pan,*bunuR₁,acd,19072-2e21cf43598ab31b65317c355a8745b2-1,to swell; swollen,pan,acd-2.0/cldf/forms.csv,,,,
@@ -9438,14 +9437,12 @@ dust,pan,*bulbul,acd,19072-81ce2a8b273ad422d5190e8229c9dc24-1,"dust, pulverized 
 dust,pmp,*qabuk,acd,19081-b2c74ded3e1cf5db741a6133a469cd68-2,"dust, sawdust",pmp,acd-2.0/cldf/forms.csv,,,,
 earth,pmp,*taneq,acd,19081-5a1fcaf43a81cc2ae73af9c5a019dc9d-1,"earth, soil, land",pmp,acd-2.0/cldf/forms.csv,,,,
 cloud,pan,*luNuŋ,acd,19072-a1234b3161b4fbfdfb96dd576b65bbea-1,cloud,pan,acd-2.0/cldf/forms.csv,,,,
-cloud,pmp,*luNuŋ,acd,19072-a1234b3161b4fbfdfb96dd576b65bbea-1,cloud,pan,acd-2.0/cldf/forms.csv,,,,pan
 fog,pmp,*kabut,acd,19081-12658fb3ce4d1e92721157111e81c537-1,"fog, haze, mist; indistinct, blurry",pmp,acd-2.0/cldf/forms.csv,,,,
 sky,pan,*laŋiC,acd,19072-900bc885d7553375aec470198a9514f3-1,sky,pan,acd-2.0/cldf/forms.csv,,,,
 sky,pmp,*laŋit,acd,19081-900bc885d7553375aec470198a9514f3-1,sky,pmp,acd-2.0/cldf/forms.csv,,,,
 wind,pan,*bali₃,acd,19072-7e25b972e192b01004b62346ee9975a5-1,wind,pan,acd-2.0/cldf/forms.csv,,,,
 wind,pmp,*haŋin,acd,19081-7e25b972e192b01004b62346ee9975a5-1,wind,pmp,acd-2.0/cldf/forms.csv,,,,
 snow,pan,*SuReNa,acd,19072-2b93fbdf27d43547bec8794054c28e00-1,snow,pan,acd-2.0/cldf/forms.csv,,,,
-snow,pmp,*SuReNa,acd,19072-2b93fbdf27d43547bec8794054c28e00-1,snow,pan,acd-2.0/cldf/forms.csv,,,,pan
 smoke,pan,*qaseb,acd,19072-fdfa02ecf86feac3801254da57c1c9ba-2,smoke,pan,acd-2.0/cldf/forms.csv,,,,
 smoke,pmp,*qaseb,acd,19081-fdfa02ecf86feac3801254da57c1c9ba-1,smoke,pmp,acd-2.0/cldf/forms.csv,,,,
 fire,pan,*Sapuy,acd,19072-015f28b9df1bdd36427dd976fb73b29d-1,fire,pan,acd-2.0/cldf/forms.csv,,,,
@@ -9535,6 +9532,5 @@ nine,pmp,*siwa,acd,19081-c785e1ed2950e3e36b1e2ca01f299a54-1,nine,pmp,acd-2.0/cld
 ten,pan,*sa-puluq,acd,19072-b1b9a972ccd8c962a473909b97007eb4-1,ten,pan,acd-2.0/cldf/forms.csv,,,,
 ten,pmp,*sa-puluq,acd,19081-b1b9a972ccd8c962a473909b97007eb4-2,ten,pmp,acd-2.0/cldf/forms.csv,,,,
 twenty,pan,*ma-puSaN,acd,19072-ab389edaabf8d841f5719d0cf64006a3-1,twenty,pan,acd-2.0/cldf/forms.csv,,,,
-twenty,pmp,*ma-puSaN,acd,19072-ab389edaabf8d841f5719d0cf64006a3-1,twenty,pan,acd-2.0/cldf/forms.csv,,,,pan
 hundred,pan,*RaCus,acd,19072-34b569aa5f872cc9d12a7f4e5adf8ec0-1,hundred,pan,acd-2.0/cldf/forms.csv,,,,
 hundred,pmp,*Ratus,acd,19081-34b569aa5f872cc9d12a7f4e5adf8ec0-1,hundred,pmp,acd-2.0/cldf/forms.csv,,,,

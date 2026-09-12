@@ -3,7 +3,7 @@
   "varieties": 42,
   "excel_rows": 45948,
   "mapped_excel_rows": 9091,
-  "forms": 8396,
+  "forms": 8392,
   "coverage": {
     "ami_nt": 190,
     "ami_hk": 190,
@@ -48,14 +48,9 @@
     "yam": 190,
     "sak": 192,
     "pan": 183,
-    "pmp": 206
+    "pmp": 202
   },
-  "pmp_fallback_concepts": [
-    "cloud",
-    "sing",
-    "snow",
-    "twenty"
-  ],
+  "pmp_fallback_concepts": [],
   "source_sha256": {
     "2026學習詞表-01南勢阿美語.xlsx": "4d0c4bd5274fa8fad4ff5105c4255ced6aa4390017826536d7a80276aa3b8628",
     "2026學習詞表-02秀姑巒阿美語.xlsx": "d2d4310cff3777acb4aff05c3da08ec1ddb6254892045720c0b34cc9ac058e94",

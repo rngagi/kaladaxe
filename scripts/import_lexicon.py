@@ -91,20 +91,17 @@ def import_data(excel_dir, acd_dir, klokah_dir, out):
     for concept, levels in selected.items():
         for variety, language_id in PROTO_LANGS.items():
             form_ids = levels[variety]
-            fallback = variety == "pmp" and not form_ids and bool(levels["pan"])
-            if fallback:
-                form_ids = levels["pan"]
             for form_id in form_ids:
                 form = acd[form_id]
-                level = "pan" if fallback else variety
-                assert form["Language_ID"] == PROTO_LANGS[level], (concept, form_id)
+                level = variety
+                assert form["Language_ID"] == language_id, (concept, form_id)
                 # Value preserves the ACD reconstruction marker and transcription.
                 orth = form["Value"]
                 assert orth.startswith("*"), (concept, form_id, orth)
                 sources.append(dict(concept_id=concept, variety_id=variety, orth=orth, source_type="acd",
                                     source_id=form_id, source_gloss=form["Description"], source_level=level,
                                     file="acd-2.0/cldf/forms.csv", sheet="", row="", source_note=form["Source"],
-                                    fallback_from="pan" if fallback else ""))
+                                    fallback_from=""))
     by_pair = defaultdict(list)
     for row in sources:
         by_pair[row["concept_id"], row["variety_id"]].append(row)
@@ -122,8 +119,7 @@ def import_data(excel_dir, acd_dir, klokah_dir, out):
                     if e["source_note"]:
                         note += "：" + e["source_note"]
                 else:
-                    prefix = "PMP 缺項，複製 PAn；" if e["fallback_from"] else ""
-                    note = f"{prefix}ACD {e['source_level'].upper()} {e['source_id']}「{e['source_gloss']}」"
+                    note = f"ACD {e['source_level'].upper()} {e['source_id']}「{e['source_gloss']}」"
                 if note not in notes:
                     notes.append(note)
             words.append(dict(concept_id=concept["id"], variety_id=variety, orth=orth, ipa="", note="；".join(notes)))

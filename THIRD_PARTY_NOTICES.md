@@ -6,8 +6,8 @@
 - Modern forms: 財團法人原住民族語言研究發展基金會《2026年學習詞表》, 42 user-provided Excel files. Source filenames, sheet names, rows and original glosses are retained in source/learning.csv and source/word_sources.csv.
 - Language identifiers follow klokah commands/kl.py (dialect_names and dialect_mapping).
 - Proto forms: Robert Blust and Stephen Trussel, Austronesian Comparative Dictionary, CLDF edition: https://github.com/lexibank/acd . Local acd-2.0 metadata and LICENSE specify CC BY 4.0: https://creativecommons.org/licenses/by/4.0/ .
-- ACD Form IDs, original glosses and source levels are retained in source/word_sources.csv. PMP copies from PAn are explicitly marked. Orthography is retained; no IPA is inferred.
-- The learning-list mode additionally preserves 938 selected ACD source records in source/import/learning_acd_records.json, with explicit Form ID matches in source/import/learning_matches.json. Near meanings and PAn-to-PMP fallbacks are marked in the generated learning reports and word details; they are editorial mappings, not additional reconstructions attributed to ACD.
+- ACD Form IDs, original glosses and source levels are retained in source/word_sources.csv. PAn and PMP each require source records from their own reconstruction level; missing PMP forms remain absent. Orthography is retained; no IPA is inferred.
+- The learning-list mode additionally preserves 938 selected ACD source records in source/import/learning_acd_records.json, with explicit Form ID matches in source/import/learning_matches.json. Near meanings are marked in the generated learning reports and word details; they are editorial mappings, not additional reconstructions attributed to ACD.
 
 ## Leaflet 1.9.4
 

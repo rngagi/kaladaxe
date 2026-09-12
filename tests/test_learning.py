@@ -53,12 +53,16 @@ class LearningDataTests(unittest.TestCase):
         self.assertEqual(self.words["04-07"]["forms"]["tha"]["orth"], "ayuzi")
         self.assertIn("不代表妻子", self.words["04-07"]["forms"]["tha"]["note"])
         self.assertEqual(self.words["36-28"]["forms"]["yam"]["orth"], "mamimin")
-        self.assertIn("PMP 缺項，以 PAn", self.words["16-01"]["forms"]["pmp"]["note"])
+        self.assertIn("pan", self.words["16-01"]["forms"])
+        self.assertNotIn("pmp", self.words["16-01"]["forms"])
         for w in self.words.values():
             for lang in ("pan", "pmp"):
                 if lang in w["forms"]:
                     self.assertTrue(w["forms"][lang]["orth"].startswith("*"))
                     self.assertTrue(all(r["source_id"] for r in w["forms"][lang]["sources"]))
+                    prefix = "19072-" if lang == "pan" else "19081-"
+                    self.assertTrue(all(r["source_id"].startswith(prefix) and not r["fallback_from"]
+                                        for r in w["forms"][lang]["sources"]))
 
 
 class LearningValidationTests(unittest.TestCase):
@@ -96,15 +100,17 @@ class LearningValidationTests(unittest.TestCase):
         self.save()
         return assemble(self.path, self.concepts, self.varieties)
 
-    def test_tie_breaker_same_variety_supplement_and_fallback(self):
+    def test_tie_breaker_same_variety_supplement_and_no_proto_fallback(self):
         index, words, reports = self.run_assemble()
         self.assertEqual([i["id"] for i in index["items"]], ["26-99", "26-100"])
         self.assertEqual(index["items"][1]["gloss_zh"], "水")  # variety order, not CSV row order
         self.assertEqual(words["26-100"]["forms"]["a"]["orth"], "word-a")
         self.assertEqual(words["26-100"]["forms"]["b"]["source_gloss"], "其他原義")
-        self.assertEqual(words["26-99"]["forms"]["pmp"]["sources"][0]["fallback_from"], "pan")
+        self.assertIn("pan", words["26-99"]["forms"])
+        self.assertNotIn("pmp", words["26-99"]["forms"])
+        self.assertTrue(any(r["entry_id"] == "26-99" and r["variety_id"] == "pmp" for r in reports["missing"]))
         self.assertEqual(reports["summary"]["modern_supplements"], 1)
-        self.assertEqual(reports["summary"]["pan_fallbacks"], 1)
+        self.assertEqual(reports["summary"]["pan_fallbacks"], 0)
 
     def test_duplicates_missing_varieties_and_unknown_concepts(self):
         baseline = copy.deepcopy(self.rows)

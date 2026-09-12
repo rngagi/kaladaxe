@@ -142,8 +142,7 @@ def assemble(source, concepts, varieties):
             if lang not in vi:
                 require(not e["proto"][lang], f"對應祖語不存在 {lang}")
                 continue
-            fallback = lang == "pmp" and not e["proto"][lang] and bool(e["proto"]["pan"])
-            selected = e["proto"]["pan"] if fallback else e["proto"][lang]
+            selected = e["proto"][lang]
             records, notes, orths = [], [], []
             seen = set()
             for match in selected:
@@ -153,22 +152,22 @@ def assemble(source, concepts, varieties):
                 seen.add(fid)
                 used_acd.add(fid)
                 r = acd[fid]
-                source_lang = "pan" if fallback else lang
+                source_lang = lang
                 require(r["Language_ID"] == PROTO_LANGS[source_lang], f"ACD 語言層級不符 {eid}: {fid}")
                 record = dict(entry_id=eid, variety_id=lang, source_type="acd", source_id=fid,
                               orth=r["Value"], source_gloss=r["Description"], relation=match["relation"],
-                              match_note=match["note"], fallback_from="pan" if fallback else "")
+                              match_note=match["note"], fallback_from="")
                 records.append(record)
                 provenance.append(record)
                 additions.append(record)
-                if match["relation"] != "equivalent" or fallback:
+                if match["relation"] != "equivalent":
                     near.append(record)
                 notes.append(f'{LABELS[match["relation"]]}：{match["note"]}\nACD {source_lang.upper()} Form ID: {fid}')
                 if r["Value"] not in orths:
                     orths.append(r["Value"])
             if records:
                 forms[lang] = dict(orth=" / ".join(orths), ipa="",
-                                   note=("PMP 缺項，以 PAn 形式補入（fallback_from=pan）。\n" if fallback else "") + "\n\n".join(notes),
+                                   note="\n\n".join(notes),
                                    source_gloss=" / ".join(dict.fromkeys(r["source_gloss"] for r in records)), sources=records)
         for v in varieties:
             vid = v["id"]

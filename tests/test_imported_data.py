@@ -43,24 +43,21 @@ class ImportedDataTests(unittest.TestCase):
         self.assertEqual(self.words["six"]["forms"]["pan"]["orth"], "*enem")
         self.assertEqual(self.words["nine"]["forms"]["pmp"]["orth"], "*siwa")
 
-    def test_proto_provenance_and_fallback(self):
+    def test_proto_provenance_requires_its_own_language_level(self):
         selected = json.loads((ROOT / "source/import/acd_forms.json").read_text())
-        fallback = set()
         for source in self.sources:
             if source["source_type"] != "acd":
                 continue
             level = source["source_level"]
             self.assertTrue(source["source_id"].startswith("19072-" if level == "pan" else "19081-"))
             self.assertIn(source["source_id"], selected[source["concept_id"]][level])
-            if source["fallback_from"]:
-                concept = source["concept_id"]
-                fallback.add(concept)
-                self.assertFalse(selected[concept]["pmp"])
-                self.assertEqual(source["variety_id"], "pmp")
-                self.assertEqual(self.words[concept]["forms"]["pmp"]["orth"],
-                                 self.words[concept]["forms"]["pan"]["orth"])
-                self.assertIn("複製 PAn", self.words[concept]["forms"]["pmp"]["note"])
-        self.assertEqual(fallback, {"cloud", "sing", "snow", "twenty"})
+            self.assertFalse(source["fallback_from"])
+            self.assertEqual(level, source["variety_id"])
+        for concept, levels in selected.items():
+            if not levels["pmp"]:
+                self.assertNotIn("pmp", self.words[concept]["forms"])
+        for concept in ("cloud", "sing", "snow", "twenty"):
+            self.assertIn("pan", self.words[concept]["forms"])
 
     def test_missing_inventory_and_semantic_distinctions(self):
         with (ROOT / "source/missing.csv").open(encoding="utf-8", newline="") as f:

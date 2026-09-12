@@ -513,6 +513,7 @@ say,ata_pl
 say,ata_sk
 say,ata_kl
 say,pan
+sing,pmp
 play,pan
 play,pmp
 float,ami_nt
@@ -743,6 +744,7 @@ cloud,ata_pl
 cloud,ata_sk
 cloud,ata_kl
 cloud,tso
+cloud,pmp
 fog,ami_nt
 fog,ami_hk
 fog,ami_ha
@@ -786,6 +788,7 @@ fog,yam
 fog,sak
 fog,pan
 snow,yam
+snow,pmp
 ice,pan
 ice,pmp
 burn,pan
@@ -1019,3 +1022,4 @@ with,pmp
 because,puy_py
 because,kav
 because,pan
+twenty,pmp
