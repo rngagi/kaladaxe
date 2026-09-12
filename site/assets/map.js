@@ -3,6 +3,7 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   const L = window.L;
   if (!L) throw new Error("Leaflet 載入失敗");
   const map = L.map(element, { zoomControl: false, zoomSnap: 0, zoomDelta: 0.5, scrollWheelZoom: false, bounceAtZoomLimits: false, minZoom: 5, maxZoom: 14, attributionControl: true });
+  enableMobileGestures(map, element);
   L.control.zoom({ position: "topright", zoomInTitle: "放大地圖", zoomOutTitle: "縮小地圖" }).addTo(map);
   map.attributionControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
   map.attributionControl.addAttribution('<a href="https://www.naturalearthdata.com/">Natural Earth</a>');
@@ -363,6 +364,55 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
 
 // Trackpad events feed one continuous, frame-driven zoom instead of separate
 // Leaflet wheel animations. Keep the geographic point under the cursor fixed.
+function enableMobileGestures(map, element) {
+  const mobile = matchMedia("(max-width: 760px), (pointer: coarse)");
+  const hint = document.getElementById("map-touch-hint");
+  const storageKey = "kaladaxe:map-touch-hint-seen";
+  let seen = false;
+  let visible = false;
+  let timer;
+  try { seen = sessionStorage.getItem(storageKey) === "1"; } catch { /* Storage may be unavailable. */ }
+
+  function dismiss() {
+    clearTimeout(timer);
+    if (hint) hint.hidden = true;
+  }
+
+  function showHint() {
+    if (!hint || seen || !mobile.matches || !visible) return;
+    seen = true;
+    try { sessionStorage.setItem(storageKey, "1"); } catch { /* Once per page without storage. */ }
+    hint.hidden = false;
+    timer = setTimeout(dismiss, 5000);
+    observer.disconnect();
+  }
+
+  function update() {
+    // Leaflet's touchZoom already pans with the two-finger midpoint as well as
+    // pinching. Disabling its single-pointer drag also removes touch-action:none.
+    if (mobile.matches) map.dragging.disable();
+    else map.dragging.enable();
+    element.classList.toggle("two-finger-map", mobile.matches);
+    if (!mobile.matches) dismiss();
+    showHint();
+  }
+
+  const observer = new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting && entry.intersectionRatio >= 0.25;
+    showHint();
+  }, { threshold: 0.25 });
+  if (!seen) observer.observe(element);
+  hint?.addEventListener("click", dismiss);
+  mobile.addEventListener("change", update);
+  update();
+  map.on("unload", () => {
+    dismiss();
+    observer.disconnect();
+    mobile.removeEventListener("change", update);
+    hint?.removeEventListener("click", dismiss);
+  });
+}
+
 function enableSmoothWheelZoom(map, element) {
   let frame = 0;
   let targetZoom = map.getZoom();

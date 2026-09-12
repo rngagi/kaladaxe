@@ -630,6 +630,87 @@ try {
     assert.ok((await sitemap.text()).includes("https://rngagi.github.io/kaladaxe/"));
     await staticPage.close();
   });
+  await check("mobile real touch scroll, two-finger pan/pinch and first-visible hint", async () => {
+    const touchContext = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const touch = await touchContext.newPage();
+    const touchErrors = [];
+    touch.on("pageerror", (error) => touchErrors.push(error.message));
+    await touch.route(base + "/", async (route) => {
+      const response = await route.fetch();
+      await route.fulfill({ response, body: (await response.text()).replace("</head>",
+        '<style id="hint-test-spacing">.concept-section { min-height: 1200px; }</style></head>') });
+    });
+    await touch.route("**/assets/map.js", async (route) => {
+      const response = await route.fetch();
+      await route.fulfill({ response, body: (await response.text()).replace(
+        "const map = L.map(element,", "const map = window.__touchAtlas = L.map(element,") });
+    });
+    await touch.goto(base + "/");
+    await settled(touch);
+    await sleep(5200);
+    assert.ok(await touch.locator("#map-touch-hint").isHidden(), "offscreen hint must not start its timer");
+    await touch.locator("#map").scrollIntoViewIfNeeded();
+    await touch.locator("#map-touch-hint").waitFor({ state: "visible" });
+    await touch.screenshot({ path: join(screenshots, "mobile-touch-hint.png"), fullPage: false });
+    await touch.locator("#map-touch-hint").tap();
+    assert.ok(await touch.locator("#map-touch-hint").isHidden());
+    await touch.reload();
+    await settled(touch);
+    await touch.locator("#map").scrollIntoViewIfNeeded();
+    assert.ok(await touch.locator("#map-touch-hint").isHidden(), "hint is once per tab session");
+    const cdp = await touchContext.newCDPSession(touch);
+    async function frame() {
+      return touch.evaluate(() => ({ scroll: scrollY, zoom: window.__touchAtlas.getZoom(),
+        lat: window.__touchAtlas.getCenter().lat, lng: window.__touchAtlas.getCenter().lng }));
+    }
+    async function mapTop() {
+      await touch.evaluate(() => window.scrollTo(0, scrollY + document.getElementById("map").getBoundingClientRect().top - 80));
+      await sleep(100);
+      return (await touch.locator("#map").boundingBox()).y;
+    }
+    async function gesture(start, end) {
+      const points = (coordinates) => coordinates.map(([x, y], id) => ({ x, y, id, radiusX: 6, radiusY: 6 }));
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: points(start) });
+      for (let step = 1; step <= 10; step++) {
+        const coordinates = start.map(([x, y], i) => [x + (end[i][0] - x) * step / 10, y + (end[i][1] - y) * step / 10]);
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: points(coordinates) });
+        await sleep(25);
+      }
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+      await sleep(400);
+    }
+    let y = await mapTop();
+    const beforeScroll = await frame();
+    // The map is near the page bottom; drag down to scroll toward earlier content.
+    await gesture([[35, y + 120]], [[35, y + 240]]);
+    const afterScroll = await frame();
+    assert.ok(afterScroll.scroll < beforeScroll.scroll - 40, "one finger should scroll the document: " + JSON.stringify({ beforeScroll, afterScroll }));
+    assert.equal(afterScroll.lat, beforeScroll.lat);
+    assert.equal(afterScroll.lng, beforeScroll.lng);
+    y = await mapTop();
+    const beforePan = await frame();
+    await gesture([[110, y + 200], [230, y + 200]], [[145, y + 250], [265, y + 250]]);
+    const afterPan = await frame();
+    assert.ok(Math.abs(afterPan.lat - beforePan.lat) > 0.01, "two fingers should pan the map");
+    assert.ok(Math.abs(afterPan.zoom - beforePan.zoom) < 0.01, "parallel fingers should preserve zoom");
+    assert.ok(Math.abs(afterPan.scroll - beforePan.scroll) < 2, "two fingers must not scroll the document");
+    y = await mapTop();
+    const beforePinch = await frame();
+    await gesture([[140, y + 250], [240, y + 250]], [[90, y + 250], [290, y + 250]]);
+    const afterPinch = await frame();
+    assert.ok(afterPinch.zoom > beforePinch.zoom + 0.5, "pinch zoom must still work");
+    assert.ok(Math.abs(afterPinch.scroll - beforePinch.scroll) < 2);
+    await touch.evaluate(() => sessionStorage.removeItem("kaladaxe:map-touch-hint-seen"));
+    await touch.goto(base + "/");
+    await settled(touch);
+    await touch.locator("#map").scrollIntoViewIfNeeded();
+    await touch.locator("#map-touch-hint").waitFor({ state: "visible" });
+    await sleep(3000);
+    assert.ok(await touch.locator("#map-touch-hint").isVisible());
+    await touch.locator("#map-touch-hint").waitFor({ state: "hidden", timeout: 3000 });
+    assert.deepEqual(touchErrors, []);
+    await touchContext.close();
+  });
   assert.deepEqual(errors, [], "unexpected browser errors");
   assert.deepEqual(badResponses, [], "unexpected missing assets");
   console.log(passed + " browser scenarios passed. Screenshots: " + screenshots);
