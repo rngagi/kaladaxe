@@ -289,10 +289,17 @@ try {
     assert.equal(await page.locator(".map-pin").count(), 3);
     await page.locator('[data-filter-group="test_branch"]').click();
     assert.equal(await page.locator(".map-pin").count(), 5);
-    await page.locator('[data-filter-group="test_empty_group"]').click();
+    assert.ok(await page.locator('[data-filter-group="test_dialects"]').isChecked());
+    assert.ok(await page.locator('[data-filter-group="test_branch"]').isChecked());
+    await page.locator('[data-filter-group="test_branch"]').uncheck();
+    assert.equal(await page.locator(".map-pin").count(), 3);
+    await page.locator('[data-filter-group="test_dialects"]').uncheck();
+    assert.equal(await page.locator(".map-pin").count(), 6);
+    await page.locator('[data-filter-group="test_empty_group"]').check();
     assert.equal(await page.locator(".map-pin").count(), 0);
     assert.equal(await page.locator("#notice-title").textContent(), "此語群尚無資料");
     await page.locator("#all-groups").click();
+    assert.equal(await page.locator("[data-filter-group]:checked").count(), 0);
     assert.equal(await page.locator(".map-pin").count(), 6);
   });
   await check("same-coordinate selection, proto notice, bounded non-overlapping labels", async () => {
@@ -539,7 +546,7 @@ try {
     assert.equal(await page.locator("#concept-search").inputValue(), "");
     assert.equal(await page.locator(".concept-button").count(), 1094);
     assert.equal(await page.locator("#show-proto").isChecked(), true);
-    assert.equal(await page.locator('[data-filter-group="ami"]').getAttribute("aria-pressed"), "true");
+    assert.ok(await page.locator('[data-filter-group="ami"]').isChecked());
     assert.equal(new URL(page.url()).searchParams.get("mode"), "learning");
     await page.locator("#concept-search").fill("一些些");
     assert.equal(await page.locator('[data-concept-id="01-38"]').count(), 1);

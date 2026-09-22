@@ -97,6 +97,8 @@ body[data-mode="learning"] .concept-button .number { white-space: nowrap; font-v
 .concept-button[aria-current="true"] { background: var(--red); color: #fff; }
 .concept-button[aria-current="true"] .number, .concept-button[aria-current="true"] .english { color: #f1cfcb; }
 .group-button { border: 1px solid transparent; display: flex; align-items: center; gap: 8px; padding: 9px; width: 100%; background: transparent; font-size: 12px; text-align: left; }
+.group-filter { cursor: pointer; border-radius: 5px; }
+.group-filter input { margin: 0; accent-color: var(--red); flex-shrink: 0; }
 .group-button .count { margin-left: auto; }
 .group-button.active { background: #faf2ef; border-color: #ecd8d1; color: var(--red); }
 .group-button:hover { background: #f8f4f1; }

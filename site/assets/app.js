@@ -15,7 +15,7 @@ let varietyIndex = new Map();
 let groupIndex = new Map();
 let currentId = null;
 let selectedId = null;
-let filterId = null;
+const filterIds = new Set();
 let word = null;
 let requestVersion = 0;
 let initialized = false;
@@ -93,11 +93,11 @@ function hasForm(id) {
   return word !== null && Object.hasOwn(word.forms, id);
 }
 
-function isInGroup(variety, target = filterId) {
-  if (!target) return true;
+function isInGroup(variety) {
+  if (!filterIds.size) return true;
   let id = variety.subgroup_id;
   while (id) {
-    if (id === target) return true;
+    if (filterIds.has(id)) return true;
     id = groupIndex.get(id)?.parent_id;
   }
   return false;
@@ -206,12 +206,15 @@ function renderTree() {
     details.open = true;
     const summary = node("summary", "", group.name);
     const children = node("div", "group-children");
-    const filter = node("button", "group-button", "查看此語群");
-    filter.type = "button";
+    const label = node("label", "group-button group-filter");
+    const filter = node("input");
+    filter.type = "checkbox";
     filter.dataset.filterGroup = group.id;
-    filter.setAttribute("aria-pressed", "false");
-    filter.addEventListener("click", () => applyFilter(group.id));
-    children.append(filter);
+    filter.checked = filterIds.has(group.id);
+    filter.setAttribute("aria-label", "查看此語群：" + group.name);
+    filter.addEventListener("change", () => applyFilter(group.id, filter.checked));
+    label.append(filter, node("span", "", "查看此語群"));
+    children.append(label);
     if (group.proto_variety_id) children.append(makeVarietyButton(varietyIndex.get(group.proto_variety_id), true));
     for (const variety of varieties.filter((item) => item.subgroup_id === group.id && item.id !== group.proto_variety_id)) {
       children.append(makeVarietyButton(variety, variety.type === "proto"));
@@ -225,15 +228,17 @@ function renderTree() {
   $("variety-count").textContent = varieties.length;
 }
 
-function applyFilter(id) {
-  filterId = id;
-  $("filter-label").textContent = id ? groupIndex.get(id).name : "全部語群";
-  $("all-groups").classList.toggle("active", id === null);
-  $("all-groups").setAttribute("aria-pressed", String(id === null));
-  document.querySelectorAll("[data-filter-group]").forEach((button) => {
-    const active = button.dataset.filterGroup === id;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-pressed", String(active));
+function applyFilter(id, checked = true) {
+  if (id === null) filterIds.clear();
+  else if (checked) filterIds.add(id);
+  else filterIds.delete(id);
+  const all = filterIds.size === 0;
+  $("filter-label").textContent = all ? "全部語群" : [...filterIds].map((groupId) => groupIndex.get(groupId).name).join("、");
+  $("all-groups").classList.toggle("active", all);
+  $("all-groups").setAttribute("aria-pressed", String(all));
+  document.querySelectorAll("[data-filter-group]").forEach((checkbox) => {
+    checkbox.checked = filterIds.has(checkbox.dataset.filterGroup);
+    checkbox.closest("label").classList.toggle("active", checkbox.checked);
   });
   if (selectedId && !isInGroup(varietyIndex.get(selectedId))) closeDetail();
   renderWord();
@@ -361,7 +366,7 @@ async function selectConcept(id, mode = "none") {
     groups = dataset.subgroups;
     varietyIndex = new Map(varieties.map((item) => [item.id, item]));
     groupIndex = new Map(groups.map((item) => [item.id, item]));
-    filterId = null;
+    filterIds.clear();
     selectedId = null;
     $("filter-label").textContent = "全部語群";
     $("all-groups").classList.add("active");
