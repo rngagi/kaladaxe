@@ -1,10 +1,12 @@
 // Keep geographic pins fixed. Labels use measured, bounded screen-space offsets.
-export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
+export function createAtlas(element, onSelect, onBasemapError, onRiversError, { exportView = false } = {}) {
   const L = window.L;
   if (!L) throw new Error("Leaflet 載入失敗");
   const map = L.map(element, { zoomControl: false, zoomSnap: 0, zoomDelta: 0.5, scrollWheelZoom: false, bounceAtZoomLimits: false, minZoom: 5, maxZoom: 14, attributionControl: true });
-  enableMobileGestures(map, element);
-  L.control.zoom({ position: "topright", zoomInTitle: "放大地圖", zoomOutTitle: "縮小地圖" }).addTo(map);
+  if (!exportView) {
+    enableMobileGestures(map, element);
+    L.control.zoom({ position: "topright", zoomInTitle: "放大地圖", zoomOutTitle: "縮小地圖" }).addTo(map);
+  }
   map.attributionControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
   map.attributionControl.addAttribution('<a href="https://www.naturalearthdata.com/">Natural Earth</a>');
   const initialBounds = [[21.7, 119.25], [25.45, 122.2]];
@@ -37,9 +39,9 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
     wrapper.append(button);
     return wrapper;
   };
-  home.addTo(map);
+  if (!exportView) home.addTo(map);
   reset();
-  enableSmoothWheelZoom(map, element);
+  if (!exportView) enableSmoothWheelZoom(map, element);
   const riversPane = map.createPane("atlasRivers");
   riversPane.style.zIndex = "410";
   riversPane.style.pointerEvents = "none";
@@ -107,12 +109,12 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
     if (pane === "atlasRivers") {
       const defs = document.createElementNS(ns, "defs");
       const clip = document.createElementNS(ns, "clipPath");
-      clip.id = "atlas-river-land";
+      clip.id = exportView ? "atlas-river-land-export-" + L.stamp(map) : "atlas-river-land";
       clip.setAttribute("clipPathUnits", "userSpaceOnUse");
       defs.append(clip);
       svg.prepend(defs);
       for (const path of svg.querySelectorAll(":scope > path")) {
-        path.setAttribute("clip-path", "url(#atlas-river-land)");
+        path.setAttribute("clip-path", "url(#" + clip.id + ")");
       }
       overlay.setLandClip = (land) => {
         clip.replaceChildren();
@@ -202,7 +204,7 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
     });
     // Chrome is a layout obstacle too, especially the selected detail card.
     const origin = element.getBoundingClientRect();
-    for (const node of element.parentElement.querySelectorAll(".map-legend, .demo-notice:not([hidden]), .detail-card:not([hidden]), .map-notice:not([hidden]), .leaflet-control-zoom, .home-control")) {
+    for (const node of exportView ? [] : element.parentElement.querySelectorAll(".map-legend, .demo-notice:not([hidden]), .detail-card:not([hidden]), .map-notice:not([hidden]), .leaflet-control-zoom, .home-control")) {
       const rect = node.getBoundingClientRect();
       if (rect.bottom > origin.top && rect.top < origin.bottom) {
         boxes.push({ x: rect.left - origin.left, y: rect.top - origin.top, width: rect.width, height: rect.height });
@@ -293,7 +295,7 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
       label.addEventListener("click", () => onSelect(variety.id));
       L.DomEvent.disableClickPropagation(label);
       labelsPane.append(label);
-      return { variety, label, marker, pin };
+      return { variety, form, label, marker, pin };
     });
     schedule();
   }
@@ -350,7 +352,7 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
     schedule();
   });
   observer.observe(element);
-  const detail = element.parentElement.querySelector("#detail");
+  const detail = exportView ? null : element.parentElement.querySelector("#detail");
   if (detail) observer.observe(detail);
   if (document.fonts) {
     document.fonts.ready.then(schedule);
@@ -358,7 +360,38 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError) {
   }
   loadBasemap();
   loadRivers();
-  return { setData, select, schedule, loadBasemap, loadRivers, reset };
+  async function prepareExport() {
+    await Promise.all([baseRequest, riverRequest]);
+    if (!basemap || !rivers) throw new Error("地理圖層尚未載入，請重試圖層");
+    map.stop();
+    layout();
+  }
+  function destroy() {
+    observer.disconnect();
+    document.fonts?.removeEventListener("loadingdone", schedule);
+    clearTimeout(zoomLayoutTimer);
+    cancelAnimationFrame(frame);
+    map.remove();
+  }
+  async function createExportView() {
+    const host = document.createElement("div");
+    host.className = "png-export-map";
+    host.setAttribute("aria-hidden", "true");
+    host.inert = true;
+    document.body.append(host);
+    let portrait;
+    const dispose = () => { portrait?.destroy(); host.remove(); };
+    try {
+      portrait = createAtlas(host, () => {}, () => {}, () => {}, { exportView: true });
+      portrait.setData(records.map(({ variety, form }) => ({ variety, form })), selectedId);
+      await portrait.prepareExport();
+      return { element: host, dispose };
+    } catch (error) {
+      dispose();
+      throw error;
+    }
+  }
+  return { setData, select, schedule, loadBasemap, loadRivers, reset, prepareExport, createExportView, destroy };
 }
 
 

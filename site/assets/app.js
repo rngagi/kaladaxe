@@ -1,5 +1,7 @@
 import { createDataStore } from "./data.js";
 import { createAtlas } from "./map.js";
+import { exportMapPNG } from "./export.js";
+let exporting = false;
 
 const $ = (id) => document.getElementById(id);
 const store = createDataStore();
@@ -270,6 +272,7 @@ function syncConcept() {
 }
 
 function renderWord() {
+  $("export-png").disabled = exporting || loadState !== "ready" || !word;
   const visible = visibleVarieties();
   const available = visible.filter((variety) => hasForm(variety.id));
   const missing = visible.filter((variety) => !hasForm(variety.id));
@@ -463,6 +466,33 @@ function updateVisibility() {
   if (selectedId && !typeIsVisible(varietyIndex.get(selectedId))) closeDetail();
   if (initialized) renderWord();
 }
+
+$("export-png").addEventListener("click", async () => {
+  if (exporting || loadState !== "ready" || !word) return;
+  exporting = true;
+  $("export-png").disabled = true;
+  $("export-status").textContent = "正在匯出…";
+  let portrait;
+  try {
+    await document.fonts.ready;
+    if (loadState !== "ready" || !word) throw new Error("詞項仍在載入");
+    const metadata = {
+      title: $("current-zh").textContent + "  " + $("current-en").textContent,
+      subtitle: $("current-series").textContent + " · " + $("current-number").textContent + " · " + $("filter-label").textContent,
+      filename: "kaladaxe-" + (demoActive ? "demo" : currentMode) + "-" + currentId + ".png",
+    };
+    portrait = await atlas.createExportView();
+    await exportMapPNG(portrait.element, metadata);
+    $("export-status").textContent = "PNG 已匯出";
+  } catch (error) {
+    $("export-status").textContent = "匯出失敗，請稍後再試。";
+    console.error("PNG export failed", error);
+  } finally {
+    portrait?.dispose();
+    exporting = false;
+    $("export-png").disabled = loadState !== "ready" || !word;
+  }
+});
 
 $("show-languages").addEventListener("change", updateVisibility);
 $("show-proto").addEventListener("change", updateVisibility);

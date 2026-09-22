@@ -1,7 +1,7 @@
 // Optional browser acceptance checks. No Node dependency is needed to build the site.
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
-import { mkdtemp, mkdir, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -126,6 +126,57 @@ try {
     assert.equal(await page.locator(".map-pin").count(), 44);
     await page.locator("#show-proto").uncheck();
     await page.screenshot({ path: join(screenshots, "production-desktop.png"), fullPage: true });
+  });
+  await check("PNG export downloads a portrait map without changing the live view", async () => {
+    const before = await page.locator("#map").boundingBox();
+    const panesBefore = await page.locator("#map .leaflet-map-pane").getAttribute("style");
+    const downloadEvent = page.waitForEvent("download");
+    await page.locator("#export-png").click();
+    const download = await downloadEvent;
+    assert.equal(download.suggestedFilename(), "kaladaxe-basic-water.png");
+    const path = join(screenshots, "export-water.png");
+    await download.saveAs(path);
+    const bytes = await readFile(path);
+    assert.equal(bytes.subarray(1, 4).toString(), "PNG");
+    assert.equal(bytes.readUInt32BE(16), 1600);
+    assert.equal(bytes.readUInt32BE(20), 2400);
+    assert.ok(bytes.length > 20000, "export must contain map content");
+    await page.waitForFunction(() => document.getElementById("export-status").textContent === "PNG 已匯出");
+    assert.ok(await page.locator("#export-png").isEnabled());
+    assert.equal(await page.locator(".png-export-map").count(), 0);
+    assert.deepEqual(await page.locator("#map").boundingBox(), before);
+    assert.equal(await page.locator("#map .leaflet-map-pane").getAttribute("style"), panesBefore);
+  });
+  await check("PNG export supports mobile learning filters and recovers from encoding failure", async () => {
+    const mobile = await context.newPage();
+    await mobile.setViewportSize({ width: 390, height: 844 });
+    await mobile.goto(base + "/learning-repo/?mode=learning&concept=21-02");
+    await settled(mobile);
+    await mobile.locator("#show-languages").uncheck();
+    await mobile.locator("#show-proto").check();
+    assert.equal(await mobile.locator(".map-pin").count(), 2);
+    const event = mobile.waitForEvent("download");
+    await mobile.locator("#export-png").click();
+    const download = await event;
+    assert.equal(download.suggestedFilename(), "kaladaxe-learning-21-02.png");
+    await download.saveAs(join(screenshots, "export-learning-mobile.png"));
+    const bytes = await readFile(join(screenshots, "export-learning-mobile.png"));
+    assert.equal(bytes.readUInt32BE(16), 1600);
+    assert.equal(bytes.readUInt32BE(20), 2400);
+    await mobile.waitForFunction(() => !document.getElementById("export-png").disabled);
+    await mobile.evaluate(() => {
+      window.originalToBlob = HTMLCanvasElement.prototype.toBlob;
+      HTMLCanvasElement.prototype.toBlob = function (callback) { callback(null); };
+    });
+    await mobile.locator("#export-png").click();
+    await mobile.waitForFunction(() => document.getElementById("export-status").textContent.includes("匯出失敗"));
+    assert.ok(await mobile.locator("#export-png").isEnabled());
+    assert.equal(await mobile.locator(".png-export-map").count(), 0);
+    await mobile.evaluate(() => { HTMLCanvasElement.prototype.toBlob = window.originalToBlob; });
+    const retry = mobile.waitForEvent("download");
+    await mobile.locator("#export-png").click();
+    await retry;
+    await mobile.close();
   });
   await check("complete geography survives zoom, offscreen pans and an unfinished drag", async () => {
     const atlasPage = await context.newPage();

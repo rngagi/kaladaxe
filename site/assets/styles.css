@@ -240,3 +240,12 @@ dialog p { font: 13px/2 var(--sans); color: #786a60; }
 
 /* Only the outer map panel clips complete, non-interactive geography overlays. */
 .geography-overlay { overflow: visible; pointer-events: none; }
+
+#export-png { flex-shrink: 0; border: 1px solid #c9a099; border-radius: 4px; padding: 8px 12px; background: #fffaf7; color: var(--red); font: 12px var(--sans); }
+#export-png:disabled { opacity: .5; cursor: wait; }
+#export-status { font: 11px var(--sans); }
+.bar-context { flex-wrap: wrap; }
+.png-export-map { position: fixed !important; left: -10000px; top: 0; width: 800px; height: 1100px; font-family: var(--serif); pointer-events: none; }
+.png-export-map .word-label { max-width: 220px; }
+.png-export-map .label-orth { font-size: 19px; }
+.png-export-map .label-name { font-size: 10px; }
