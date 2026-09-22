@@ -1,3 +1,4 @@
+import { groupColor } from "./group-colors.js";
 import { createDataStore } from "./data.js";
 import { createAtlas } from "./map.js";
 import { renderMapPNG, downloadPNG } from "./export.js";
@@ -207,6 +208,10 @@ function renderTree() {
     const details = node("details", "group-node");
     details.open = true;
     const summary = node("summary", "", group.name);
+    const swatch = node("span", "group-swatch");
+    swatch.style.setProperty("--group-color", groupColor(group.id));
+    swatch.setAttribute("aria-hidden", "true");
+    summary.prepend(swatch);
     const children = node("div", "group-children");
     const label = node("label", "group-button group-filter");
     const filter = node("input");

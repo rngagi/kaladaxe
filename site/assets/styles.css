@@ -138,10 +138,11 @@ body[data-mode="learning"] .concept-button .number { white-space: nowrap; font-v
 .map-legend > label + label { border-left: 1px solid var(--line); padding-left: 18px; }
 .legend-pin, .map-pin { width: 10px; height: 10px; display: inline-block; background: var(--red); border: 2px solid #fff; outline: 1px solid #d5a5a0; border-radius: 50%; }
 .legend-pin.proto, .map-pin.proto { background: #fff; border: 1px dashed #77685e; outline: none; }
-.map-pin { width: 14px; height: 14px; padding: 0; box-shadow: 0 1px 4px #591a1a29; }
-.map-pin.proto { width: 16px; height: 16px; }
-.map-pin.selected { outline: 5px solid #991b1b20; }
-.map-pin:focus-visible { outline: 3px solid #991b1b70; outline-offset: 3px; }
+.group-swatch { display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 50%; background: var(--group-color); }
+.map-pin { background: var(--group-color, var(--red)); outline-color: var(--group-color, var(--red)); width: 14px; height: 14px; padding: 0; box-shadow: 0 1px 4px #591a1a29; }
+.map-pin.proto { border-color: var(--group-color, #77685e); width: 16px; height: 16px; }
+.map-pin.selected { outline: 5px solid color-mix(in srgb, var(--group-color, var(--red)) 25%, transparent); }
+.map-pin:focus-visible { outline: 3px solid var(--group-color, var(--red)); outline-offset: 3px; }
 .atlas-caption { position: absolute; bottom: 27px; left: 28px; right: 28px; display: flex; justify-content: space-between; pointer-events: none; color: #aca196; font: 8px var(--sans); letter-spacing: 2px; }
 .map-notice { position: absolute; top: 25px; left: 26px; width: 245px; padding: 21px; background: #ffffffed; border: 1px solid #e5dfd7; border-radius: 6px; box-shadow: 0 8px 25px #332a1504; z-index: 500; }
 .notice-symbol { color: #b8a18f; font: 24px Georgia,serif; }

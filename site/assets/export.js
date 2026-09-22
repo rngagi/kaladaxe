@@ -37,6 +37,7 @@ export async function renderMapPNG(element, { title, subtitle }) {
     return { rect, source: new XMLSerializer().serializeToString(copy) };
   });
   const pins = [...element.querySelectorAll(".map-pin")].map((pin) => ({
+    color: getComputedStyle(pin).getPropertyValue("--group-color").trim() || "#6b7280",
     rect: relative(pin), proto: pin.classList.contains("proto"), selected: pin.classList.contains("selected"),
   }));
   const labels = [...element.querySelectorAll(".word-label")]
@@ -84,12 +85,12 @@ export async function renderMapPNG(element, { title, subtitle }) {
     await image.decode();
     context.drawImage(image, rect.x, rect.y, rect.width, rect.height);
   }
-  for (const { rect, proto, selected } of pins) {
+  for (const { rect, proto, selected, color } of pins) {
     context.beginPath();
     context.arc(rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width / 2 - 1, 0, Math.PI * 2);
-    context.fillStyle = proto ? "#ffffff" : "#991b1b";
+    context.fillStyle = proto ? "#ffffff" : color;
     context.fill();
-    context.strokeStyle = selected ? "#991b1b" : proto ? "#77685e" : "#ffffff";
+    context.strokeStyle = selected || proto ? color : "#ffffff";
     context.lineWidth = 2;
     context.setLineDash(proto ? [2, 2] : []);
     context.stroke();

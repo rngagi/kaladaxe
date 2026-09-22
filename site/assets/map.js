@@ -1,3 +1,5 @@
+import { groupColor } from "./group-colors.js";
+
 // Keep geographic pins fixed. Labels use measured, bounded screen-space offsets.
 export function createAtlas(element, onSelect, onBasemapError, onRiversError, { exportView = false } = {}) {
   const L = window.L;
@@ -270,6 +272,7 @@ export function createAtlas(element, onSelect, onBasemapError, onRiversError, { 
       pin.type = "button";
       pin.className = "map-pin" + (variety.type === "proto" ? " proto" : "");
       pin.dataset.varietyId = variety.id;
+      pin.style.setProperty("--group-color", groupColor(variety.subgroup_id));
       pin.setAttribute("aria-label", variety.name + "：" + form.orth + "，查看詞彙詳情");
       const marker = L.marker([variety.latitude, variety.longitude], {
         icon: L.divIcon({ className: "pin-container", html: pin, iconSize: [16, 16], iconAnchor: [8, 8] }),
