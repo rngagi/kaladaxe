@@ -251,3 +251,14 @@ dialog p { font: 13px/2 var(--sans); color: #786a60; }
 .png-export-map .word-label { max-width: 220px; }
 .png-export-map .label-orth { font-size: 19px; }
 .png-export-map .label-name { font-size: 10px; }
+#export-dialog { width: min(760px, calc(100vw - 28px)); max-width: none; max-height: 92dvh; padding: 0; overflow: hidden; background: var(--paper); }
+#export-dialog[open] { display: flex; flex-direction: column; }
+.export-preview-header { position: relative; padding: 20px 52px 16px 24px; flex-shrink: 0; }
+#export-title { margin: 0 0 6px; font-size: 21px; }
+#export-preview-message { margin: 0; font-size: 12px; }
+.export-preview-body { min-height: 120px; overflow: auto; padding: 16px; background: #eae6e0; display: flex; justify-content: center; }
+#export-preview-image { display: block; width: auto; height: auto; max-width: 100%; max-height: calc(92dvh - 190px); object-fit: contain; align-self: flex-start; box-shadow: 0 2px 12px #33231318; }
+.export-preview-actions { display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--line); flex-shrink: 0; }
+.export-preview-actions button { padding: 10px 18px; border: 1px solid #c9a099; border-radius: 4px; background: #fffaf7; color: var(--red); font: 13px var(--sans); }
+#export-download { background: var(--red); color: white; }
+#export-download:disabled { opacity: .5; cursor: default; }

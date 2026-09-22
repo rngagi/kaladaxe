@@ -1,5 +1,5 @@
 // Capture the rendered SVG geography and screen-space labels without remote assets.
-export async function exportMapPNG(element, { title, subtitle, filename }) {
+export async function renderMapPNG(element, { title, subtitle }) {
   const bounds = element.getBoundingClientRect();
   const width = Math.round(bounds.width);
   const height = Math.round(bounds.height);
@@ -108,8 +108,11 @@ export async function exportMapPNG(element, { title, subtitle, filename }) {
     }
   }
   context.restore();
-  const blob = await new Promise((resolve, reject) => canvas.toBlob(
+  return new Promise((resolve, reject) => canvas.toBlob(
     (result) => result ? resolve(result) : reject(new Error("PNG 編碼失敗")), "image/png"));
+}
+
+export function downloadPNG(blob, filename) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;

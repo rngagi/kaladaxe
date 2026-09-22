@@ -1,7 +1,9 @@
 import { createDataStore } from "./data.js";
 import { createAtlas } from "./map.js";
-import { exportMapPNG } from "./export.js";
+import { renderMapPNG, downloadPNG } from "./export.js";
 let exporting = false;
+let exportPreview = null;
+let previewVersion = 0;
 
 const $ = (id) => document.getElementById(id);
 const store = createDataStore();
@@ -475,11 +477,18 @@ function updateVisibility() {
 $("export-png").addEventListener("click", async () => {
   if (exporting || loadState !== "ready" || !word) return;
   exporting = true;
+  const version = ++previewVersion;
   $("export-png").disabled = true;
-  $("export-status").textContent = "正在匯出…";
+  $("export-status").textContent = "";
+  $("export-preview-message").textContent = "正在準備預覽…";
+  $("export-preview-image").hidden = true;
+  $("export-download").disabled = true;
+  $("export-preview-body").setAttribute("aria-busy", "true");
+  $("export-dialog").showModal();
   let portrait;
   try {
     await document.fonts.ready;
+    if (version !== previewVersion) return;
     if (loadState !== "ready" || !word) throw new Error("詞項仍在載入");
     const metadata = {
       title: $("current-zh").textContent + "  " + $("current-en").textContent,
@@ -487,16 +496,46 @@ $("export-png").addEventListener("click", async () => {
       filename: "kaladaxe-" + (demoActive ? "demo" : currentMode) + "-" + currentId + ".png",
     };
     portrait = await atlas.createExportView();
-    await exportMapPNG(portrait.element, metadata);
-    $("export-status").textContent = "PNG 已匯出";
+    if (version !== previewVersion) return;
+    const blob = await renderMapPNG(portrait.element, metadata);
+    if (version !== previewVersion) return;
+    exportPreview = { blob, filename: metadata.filename, url: URL.createObjectURL(blob) };
+    $("export-preview-image").src = exportPreview.url;
+    $("export-preview-image").alt = metadata.title + "，直式詞彙地圖預覽";
+    await $("export-preview-image").decode();
+    if (version !== previewVersion) return;
+    $("export-preview-image").hidden = false;
+    $("export-preview-message").textContent = "1600 × 2400 像素 · PNG";
+    $("export-download").disabled = false;
   } catch (error) {
-    $("export-status").textContent = "匯出失敗，請稍後再試。";
-    console.error("PNG export failed", error);
+    if (version === previewVersion) {
+      $("export-preview-message").textContent = "無法產生預覽，請關閉後重試。";
+      $("export-status").textContent = "匯出失敗，請稍後再試。";
+      console.error("PNG export failed", error);
+    }
   } finally {
     portrait?.dispose();
+    $("export-preview-body").setAttribute("aria-busy", "false");
     exporting = false;
     $("export-png").disabled = loadState !== "ready" || !word;
   }
+});
+
+$("export-cancel").addEventListener("click", () => $("export-dialog").close());
+$("export-close").addEventListener("click", () => $("export-dialog").close());
+$("export-dialog").addEventListener("close", () => {
+  previewVersion++;
+  $("export-preview-image").removeAttribute("src");
+  $("export-preview-image").hidden = true;
+  $("export-download").disabled = true;
+  if (exportPreview) URL.revokeObjectURL(exportPreview.url);
+  exportPreview = null;
+});
+$("export-download").addEventListener("click", () => {
+  if (!exportPreview || $("export-download").disabled) return;
+  downloadPNG(exportPreview.blob, exportPreview.filename);
+  $("export-status").textContent = "PNG 已匯出";
+  $("export-dialog").close();
 });
 
 $("show-languages").addEventListener("change", updateVisibility);
@@ -517,7 +556,7 @@ $("about-dialog").addEventListener("click", (event) => {
   if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) $("about-dialog").close();
 });
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && !$("about-dialog").open && !$("detail").hidden) closeDetail(true);
+  if (event.key === "Escape" && !$("about-dialog").open && !$("export-dialog").open && !$("detail").hidden) closeDetail(true);
 });
 window.addEventListener("popstate", () => {
   if (initialized) {

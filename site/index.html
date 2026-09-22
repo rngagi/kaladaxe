@@ -132,6 +132,20 @@
       </aside>
     </section>
   </main>
+  <dialog id="export-dialog" aria-labelledby="export-title" aria-describedby="export-preview-message">
+    <header class="export-preview-header">
+      <h2 id="export-title">匯出預覽</h2>
+      <p id="export-preview-message" role="status">正在準備預覽…</p>
+      <button id="export-close" type="button" class="icon-button dialog-close" aria-label="關閉匯出預覽">×</button>
+    </header>
+    <div id="export-preview-body" class="export-preview-body" aria-busy="false">
+      <img id="export-preview-image" alt="直式詞彙地圖預覽" width="1600" height="2400" hidden>
+    </div>
+    <footer class="export-preview-actions">
+      <button id="export-cancel" type="button" autofocus>取消</button>
+      <button id="export-download" type="button" disabled>下載 PNG</button>
+    </footer>
+  </dialog>
   <dialog id="about-dialog" aria-labelledby="about-title">
     <button id="about-close" class="icon-button dialog-close" aria-label="關閉關於視窗">×</button>
     <span class="eyebrow">ABOUT THE ATLAS</span>

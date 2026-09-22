@@ -128,15 +128,26 @@ try {
     await page.screenshot({ path: join(screenshots, "production-desktop.png"), fullPage: true });
   });
   await check("PNG export downloads a portrait map without changing the live view", async () => {
+    let downloadCount = 0;
+    const countDownload = () => downloadCount++;
+    page.on("download", countDownload);
     const before = await page.locator("#map").boundingBox();
     const panesBefore = await page.locator("#map .leaflet-map-pane").getAttribute("style");
     const downloadEvent = page.waitForEvent("download");
     await page.locator("#export-png").click();
+    await page.locator("#export-download:not([disabled])").waitFor();
+    assert.equal(downloadCount, 0, "opening the preview must not start a download");
+    assert.ok(await page.locator("#export-preview-image").isVisible());
+    const previewBytes = await page.evaluate(async () => Array.from(new Uint8Array(
+      await (await fetch(document.getElementById("export-preview-image").src)).arrayBuffer())));
+    await page.screenshot({ path: join(screenshots, "export-preview-desktop.png") });
+    await page.locator("#export-download").click();
     const download = await downloadEvent;
     assert.equal(download.suggestedFilename(), "kaladaxe-basic-water.png");
     const path = join(screenshots, "export-water.png");
     await download.saveAs(path);
     const bytes = await readFile(path);
+    assert.deepEqual(bytes, Buffer.from(previewBytes), "download must match the preview exactly");
     assert.equal(bytes.subarray(1, 4).toString(), "PNG");
     assert.equal(bytes.readUInt32BE(16), 1600);
     assert.equal(bytes.readUInt32BE(20), 2400);
@@ -146,6 +157,40 @@ try {
     assert.equal(await page.locator(".png-export-map").count(), 0);
     assert.deepEqual(await page.locator("#map").boundingBox(), before);
     assert.equal(await page.locator("#map .leaflet-map-pane").getAttribute("style"), panesBefore);
+    page.off("download", countDownload);
+  });
+  await check("PNG preview cancellation, Escape and cancellation during rendering never download", async () => {
+    let downloads = 0;
+    const countDownload = () => downloads++;
+    page.on("download", countDownload);
+    await page.locator("#export-png").click();
+    await page.locator("#export-download:not([disabled])").waitFor();
+    await page.locator("#export-cancel").click();
+    await page.waitForFunction(() => !document.getElementById("export-preview-image").hasAttribute("src"));
+    assert.ok(await page.locator("#export-dialog").isHidden());
+    await page.locator("#export-png").click();
+    await page.locator("#export-download:not([disabled])").waitFor();
+    await page.keyboard.press("Escape");
+    await page.locator("#export-dialog").waitFor({ state: "hidden" });
+    await page.evaluate(() => {
+      window.originalPreviewToBlob = HTMLCanvasElement.prototype.toBlob;
+      HTMLCanvasElement.prototype.toBlob = function (callback, type) {
+        window.releasePreviewBlob = () => window.originalPreviewToBlob.call(this, callback, type);
+      };
+    });
+    await page.locator("#export-png").click();
+    await page.waitForFunction(() => Boolean(window.releasePreviewBlob));
+    assert.ok(await page.locator("#export-download").isDisabled());
+    await page.locator("#export-cancel").click();
+    await page.evaluate(() => {
+      HTMLCanvasElement.prototype.toBlob = window.originalPreviewToBlob;
+      window.releasePreviewBlob();
+    });
+    await page.waitForFunction(() => !document.getElementById("export-png").disabled);
+    assert.ok(await page.locator("#export-dialog").isHidden());
+    assert.equal(await page.locator(".png-export-map").count(), 0);
+    assert.equal(downloads, 0);
+    page.off("download", countDownload);
   });
   await check("PNG export supports mobile learning filters and recovers from encoding failure", async () => {
     const mobile = await context.newPage();
@@ -157,6 +202,12 @@ try {
     assert.equal(await mobile.locator(".map-pin").count(), 2);
     const event = mobile.waitForEvent("download");
     await mobile.locator("#export-png").click();
+    await mobile.locator("#export-download:not([disabled])").waitFor();
+    await mobile.screenshot({ path: join(screenshots, "export-preview-mobile.png") });
+    const dialog = await mobile.locator("#export-dialog").boundingBox();
+    assert.ok(dialog.x >= 0 && dialog.x + dialog.width <= 390);
+    assert.ok(dialog.y >= 0 && dialog.y + dialog.height <= 844);
+    await mobile.locator("#export-download").click();
     const download = await event;
     assert.equal(download.suggestedFilename(), "kaladaxe-learning-21-02.png");
     await download.saveAs(join(screenshots, "export-learning-mobile.png"));
@@ -172,9 +223,13 @@ try {
     await mobile.waitForFunction(() => document.getElementById("export-status").textContent.includes("匯出失敗"));
     assert.ok(await mobile.locator("#export-png").isEnabled());
     assert.equal(await mobile.locator(".png-export-map").count(), 0);
+    assert.ok(await mobile.locator("#export-download").isDisabled());
+    await mobile.locator("#export-cancel").click();
     await mobile.evaluate(() => { HTMLCanvasElement.prototype.toBlob = window.originalToBlob; });
     const retry = mobile.waitForEvent("download");
     await mobile.locator("#export-png").click();
+    await mobile.locator("#export-download:not([disabled])").waitFor();
+    await mobile.locator("#export-download").click();
     await retry;
     await mobile.close();
   });
